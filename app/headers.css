@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.Login{
+    @apply rounded-none mr-4 text-primary dark:text-primary-dark
+}
+
+.in:hover{
+    @apply bg-primary text-secondary dark:bg-primary-dark dark:text-secondary-dark
+}
+
+.out:hover{
+    background-color: #ff6666;
+    @apply text-secondary dark:text-secondary-dark
+}
+
+.nav{
+    display: inline;
+    @apply text-primary dark:text-secondary text-lg p-4
+}
+
