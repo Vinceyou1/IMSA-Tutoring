@@ -6,6 +6,7 @@ import { getFunctions, httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+import Loading from "../loading";
 
 export default function Request(){
     
@@ -48,10 +49,8 @@ export default function Request(){
   const [subject, updateSubject] = useState("");
   
   function changeSubject(event: React.ChangeEvent<HTMLSelectElement>) {
-    updateSubject(event.target.value);
-    console.log(event.target.value);
     switch(event.target.value){
-      case "math":
+      case "Math":
         updateClasses(
           <>
             <option value="Geometry">Geometry</option>
@@ -79,7 +78,8 @@ export default function Request(){
             <option value="Microcontroller Applications">Microcontroller Applications</option>
             <option value="Web Technologies">Web Technologies</option>
           </>
-        ); break;
+        ); 
+        break;
       case "Science":
         updateClasses(
           <>
@@ -87,7 +87,8 @@ export default function Request(){
             <option value="SI-Chemistry">SI-Chemistry</option>
             <option value="SI-Physics">SI-Physics</option>
           </>
-        );break;
+        );
+        break;
       case "Language":
         updateClasses(
           <>
@@ -96,7 +97,8 @@ export default function Request(){
             <option value="German">German</option>
             <option value="Mandarin">Mandarin</option>
           </>
-        ); break;
+        ); 
+        break;
       case "English":
         updateClasses(
           <>
@@ -112,8 +114,15 @@ export default function Request(){
           <>
             <option value="American Studies">American Studies</option>
           </>
-        )
+        );
+        break;
     }
+    updateSubject(event.target.value);
+    setTimeout(() =>{
+      let class_select = (document.getElementById("class") as HTMLSelectElement);
+      updateClass(class_select.value);
+
+    }, 100);
   }
 
   const [_class, updateClass] = useState("Geometry");
@@ -128,7 +137,16 @@ export default function Request(){
       _class: _class,
       info: info,
       uid: auth.currentUser?.uid
-    }).then((result) => console.log(result.data)).catch(() => alert("There's been an error. Please try again."))
+    }).then((result) => {console.log(result.data); window.location.reload();}).catch(() => alert("There's been an error. Please try again."));
+  }
+
+  
+  if(loading){
+    return(<Loading />)
+  } 
+  if(!user){
+    window.location.replace("/")
+    console.log(user);
   }
   return(
     <div className="flex justify-center flex-col items-center min-h-[80%]">
@@ -156,6 +174,7 @@ export default function Request(){
       <div className="flex justify-center mt-20">
         <button onClick={() => submit()}className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
       </div> 
+      <>{_class}</>
     </div>
   )
 }
