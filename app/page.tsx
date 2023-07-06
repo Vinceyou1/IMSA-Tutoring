@@ -26,7 +26,7 @@ export default function Home() {
   }
   if(user){
     const email = user.email;
-    if(email?.slice(email.indexOf("@")) != "imsa.edu"){
+    if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
       return (
         <main className="flex items-center justify-center min-h-[90%]">
           <p className='text-center'>Please reload the page and sign in with your IMSA email.</p>

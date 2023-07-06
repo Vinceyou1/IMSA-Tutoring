@@ -22,7 +22,7 @@ admin.initializeApp();
 export const onNewUserCreated =
 functions.auth.user().onCreate((user) =>{
   const email = user.email;
-  if (email?.slice(email.indexOf("@")) != "imsa.edu") {
+  if (email?.slice(email.indexOf("@")) != "@imsa.edu") {
     getAuth().deleteUser(user.uid).then(() =>
       {
         console.log("Successfully deleted user");
