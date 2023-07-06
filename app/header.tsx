@@ -28,7 +28,6 @@ export default function Header(){
             <ul>
                 <li className='nav'><a href="#">Home</a></li>
                 <li className='nav'><a href="#">About</a></li>
-                <li className='nav'><a href="#">Contact</a></li>
             </ul>
             {signInOut}
         </div>

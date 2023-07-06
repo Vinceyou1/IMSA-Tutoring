@@ -4,6 +4,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Button } from '@mui/material';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import Loading from './loading';
 
 type RequestProps = {
@@ -15,11 +16,12 @@ type RequestProps = {
 }
 
 export default function Home() {
-  initFirebase();
+  const app = initFirebase();
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const functions = getFunctions(app);
 
   if(loading){
     return (<Loading />)
@@ -33,6 +35,7 @@ export default function Home() {
         </main>
       )
     }
+    // const getData = httpsCallable(functions, 'getData')
     return (
       <main className="items-center justify-between min-h-[90%]">
         
