@@ -2,6 +2,7 @@
 import initFirebase from "@/firebase/clientApp";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -14,6 +15,7 @@ export default function Request(){
   const auth = getAuth();
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
+  const functions = getFunctions(app);
 
   const [classList, updateClasses] = useState(
     <>
@@ -115,10 +117,18 @@ export default function Request(){
   }
 
   const [_class, updateClass] = useState("Geometry");
-
+  const postData = httpsCallable(functions, 'postData');
   function submit(){
     let teacher = (document.getElementById("teacher") as HTMLInputElement).value;
     let info = (document.getElementById("info") as HTMLInputElement).value;
+    postData({
+      teacher: teacher,
+      name: auth.currentUser?.displayName,
+      subject: subject,
+      _class: _class,
+      info: info,
+      uid: auth.currentUser?.uid
+    }).then((result) => console.log(result.data)).catch(() => alert("There's been an error. Please try again."))
   }
   return(
     <div className="flex justify-center flex-col items-center min-h-[80%]">
