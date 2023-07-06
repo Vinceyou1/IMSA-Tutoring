@@ -8,7 +8,7 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {onCall, onRequest} from "firebase-functions/v2/https";
+import {onCall} from "firebase-functions/v2/https";
 // import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
@@ -59,16 +59,11 @@ export const postData = onCall((request) => {
   });
 });
 
-export const helloWorld = onRequest((request, response) => {
-  admin.firestore().doc("requests/twEf65aiByX6wI2zwF1V").get().then(
-    (snapshot) => {
-      const data = snapshot.data();
-      response.send(data);
-    }
-  ).catch(
-    (error) => {
-      console.log(error);
-      response.status(500).send(error);
-    }
-  );
+export const getData = onCall(() => {
+  return getFirestore().collection("requests").orderBy("time").get()
+  .then((snapshot) => {
+    return snapshot.docs.map((doc) => doc.data());
+  }).catch(() => {
+    return "error";
+  });
 });
