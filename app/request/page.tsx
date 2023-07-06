@@ -1,13 +1,15 @@
 'use client';
 import initFirebase from "@/firebase/clientApp";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function Request(){
     
-  initFirebase();
+  const app = initFirebase();
+  const firestore = getFirestore(app);
   const provider = new GoogleAuthProvider();
   const auth = getAuth();
   const [user, loading] = useAuthState(auth);
@@ -15,29 +17,29 @@ export default function Request(){
 
   const [classList, updateClasses] = useState(
     <>
-      <option value="geometry">Geometry</option>
-      <option value="mi1/2">MI I/II</option>
-      <option value="mi2">MI II</option>
-      <option value="mi3">MI III</option>
-      <option value="mi4">MI IV</option>
-      <option value="surveyofcalc">Survey of Calculus</option>
-      <option value="ab1">AB I</option>
-      <option value="ab2">AB II</option>
-      <option value="bc1">BC I</option>
-      <option value="bc2">BC II</option>
-      <option value="bc3">BC III</option>
-      <option value="bc1/2">BC I/II</option>
-      <option value="bc2/3">BC II/III</option>
+      <option value="Geometry">Geometry</option>
+      <option value="MI I/II">MI I/II</option>
+      <option value="MI II">MI II</option>
+      <option value="MI III">MI III</option>
+      <option value="MI IV">MI IV</option>
+      <option value="Survey of Calculus">Survey of Calculus</option>
+      <option value="AB I">AB I</option>
+      <option value="AB II">AB II</option>
+      <option value="BC I">BC I</option>
+      <option value="BC II">BC II</option>
+      <option value="BC III">BC III</option>
+      <option value="BC I/II">BC I/II</option>
+      <option value="BC II/III">BC II/III</option>
     </>
   );
   const subjects = (
     <>
-      <option value="math">Math</option>
-      <option value="cs">Computer Science</option>
-      <option value="science">Science</option>
-      <option value="language">Language</option>
-      <option value="english">English</option>
-      <option value="history_and_ss">History and SS</option>
+      <option value="Math">Math</option>
+      <option value="Computer Science">Computer Science</option>
+      <option value="Science">Science</option>
+      <option value="Language">Language</option>
+      <option value="English">English</option>
+      <option value="History and SS">History and SS</option>
     </>
   )
 
@@ -50,38 +52,74 @@ export default function Request(){
       case "math":
         updateClasses(
           <>
-            <option value="geometry">Geometry</option>
-            <option value="mi1/2">MI I/II</option>
-            <option value="mi2">MI II</option>
-            <option value="mi3">MI III</option>
-            <option value="mi4">MI IV</option>
-            <option value="surveyofcalc">Survey of Calculus</option>
-            <option value="ab1">AB I</option>
-            <option value="ab2">AB II</option>
-            <option value="bc1">BC I</option>
-            <option value="bc2">BC II</option>
-            <option value="bc3">BC III</option>
-            <option value="bc1/2">BC I/II</option>
-            <option value="bc2/3">BC II/III</option>
+            <option value="Geometry">Geometry</option>
+            <option value="MI I/II">MI I/II</option>
+            <option value="MI II">MI II</option>
+            <option value="MI III">MI III</option>
+            <option value="MI IV">MI IV</option>
+            <option value="Survey of Calculus">Survey of Calculus</option>
+            <option value="AB I">AB I</option>
+            <option value="AB II">AB II</option>
+            <option value="BC I">BC I</option>
+            <option value="BC II">BC II</option>
+            <option value="BC III">BC III</option>
+            <option value="BC I/II">BC I/II</option>
+            <option value="BC II/III">BC II/III</option>
           </>
         );
         break;
-      case "cs":
-          updateClasses(
-            <>
-              <option value="csi">CSI</option>
-              <option value="oop">OOP</option>
-              <option value="adpro">Advanced Programming</option>
-              <option value="micro">Microcontroller Applications</option>
-              <option value="webtech">Web Technologies</option>
-            </>
-          )
-          break;
+      case "Computer Science":
+        updateClasses(
+          <>
+            <option value="CSI">CSI</option>
+            <option value="OOP">OOP</option>
+            <option value="Advanced Programming">Advanced Programming</option>
+            <option value="Microcontroller Applications">Microcontroller Applications</option>
+            <option value="Web Technologies">Web Technologies</option>
+          </>
+        ); break;
+      case "Science":
+        updateClasses(
+          <>
+            <option value="MSI">MSI</option>
+            <option value="SI-Chemistry">SI-Chemistry</option>
+            <option value="SI-Physics">SI-Physics</option>
+          </>
+        );break;
+      case "Language":
+        updateClasses(
+          <>
+            <option value="Spanish">Spanish</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Mandarin">Mandarin</option>
+          </>
+        ); break;
+      case "English":
+        updateClasses(
+          <>
+            <option value="LE I">LE I</option>
+            <option value="LE II">LE II</option>
+            <option value="LE III: American">LE III: American</option>
+            <option value="LE III: British">LE III: British</option>
+            <option value="LE III: World">LE III: World</option>
+          </>
+        ); break;
+      case "History and SS":
+        updateClasses(
+          <>
+            <option value="American Studies">American Studies</option>
+          </>
+        )
     }
   }
 
   const [_class, updateClass] = useState("Geometry");
 
+  function submit(){
+    let teacher = (document.getElementById("teacher") as HTMLInputElement).value;
+    let info = (document.getElementById("info") as HTMLInputElement).value;
+  }
   return(
     <div className="flex justify-center flex-col items-center min-h-[80%]">
       <div className="flex justify-center">
@@ -106,7 +144,7 @@ export default function Request(){
         </form>
       </div>
       <div className="flex justify-center mt-20">
-        <button className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
+        <button onClick={() => submit()}className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
       </div> 
     </div>
   )
