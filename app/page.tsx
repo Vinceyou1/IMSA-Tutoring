@@ -22,7 +22,8 @@ export type RequestJSON = {
     name: string,
     info: string,
     time: number,
-
+    claimed: boolean,
+    tutor: string,
   }
 }
 
@@ -34,15 +35,37 @@ export default function Home() {
 
 
   const [data, updateData] = React.useState(Array<RequestJSON>);
+  const [retrieved, updateRetrieved] = React.useState(false);
   const getData = httpsCallable(functions, 'getData');
+
+  // Filters
+  const [subjectFilter, updateSubjectFilter] = React.useState("");
+  const [classFilter, updateClassFilter] = React.useState("");
+
+  function filterData(value:RequestJSON, index:number, arr:Array<RequestJSON>) {
+    if(value['data']['claimed'] ||
+      (subjectFilter != "" && value['data']['subject'] != subjectFilter) ||
+      (classFilter != "" && value['data']['subject'] != classFilter)
+    ) {
+      arr.splice(index, 1);
+    }
+  }
 
   React.useEffect(() =>{
     const fetchData = async () =>{
       let res = await getData();
       let requests = res.data;
       updateData((requests as Array<RequestJSON>));
+      updateRetrieved(true);
+    }
+    const getFilters = () => {
+      const subjectItem = localStorage.getItem("subjectFilter");
+      const classItem = localStorage.getItem("classFilter");
+      updateSubjectFilter(subjectItem ? subjectItem : "");
+      updateClassFilter(classItem ? classItem : "");
     }
     fetchData();
+    getFilters();
   }, []);
   if(loading){
     return (<Loading />)
@@ -56,14 +79,30 @@ export default function Home() {
         </main>
       )
     }
-    if(data.length == 0){
+    if(!retrieved){
       return <Loading />
     }
+    if(data.length == 0){
+      return(
+        <div className='h-[80%] flex justify-center items-center text-lg'>
+          <p>There are no requests at this time</p>
+        </div>
+      );
+    }
+    const filtered = JSON.parse(JSON.stringify(data));
+    filtered.filter(filterData);
+    if(filtered.length == 0){
+      return(
+        <div className='h-[80%] flex justify-center items-center text-lg'>
+          <p>There are no requests with the selected filters</p>
+        </div>
+      )
+    }
     let num_cols = screen.height < screen.width ? 4 : 2;
-    let cols: RequestJSON[][] = [[data[0]]];
-    for(let i = 1; i < num_cols && i < data.length; i++){ cols.push([data[i]]);}
-    for(let i = num_cols; i < data.length; i++){
-      cols[i % num_cols].push(data[i]);
+    let cols: RequestJSON[][] = [[filtered[0]]];
+    for(let i = 1; i < num_cols && i < filtered.length; i++){ cols.push([filtered[i]]);}
+    for(let i = num_cols; i < filtered.length; i++){
+      cols[i % num_cols].push(filtered[i]);
     }
     return (
       <main className="max-w-[100%]">
@@ -81,10 +120,10 @@ export default function Home() {
   }
 
   return (
-    <div className='flex min-h-[90%] items-center justify-center'>
+    <div className='flex min-h-[80%] items-center justify-center'>
       <div>
-          <h1 className='text-center'>Welcome to IMSA Tutoring!</h1>
-          <h3 className='text-center'>Sign in with your IMSA email to get started</h3>
+          <h1 className='text-center text-lg'>Welcome to IMSA Tutoring!</h1>
+          <h3 className='text-center text-lg'>Sign in with your IMSA email to get started</h3>
           <div className='h-12'></div>
       </div>
     </div>
