@@ -49,7 +49,6 @@ export default function Request(){
   const [subject, updateSubject] = useState("");
   
   function changeSubject(value: string) {
-
     switch(value){
       case "Math":
         updateClasses(
@@ -122,13 +121,14 @@ export default function Request(){
     setTimeout(() =>{
       let class_select = (document.getElementById("class") as HTMLSelectElement);
       updateClass(class_select.value);
-
     }, 100);
   }
 
   const [_class, updateClass] = useState("Geometry");
   const postData = httpsCallable(functions, 'postData');
+  const [submitLoading, updateSubmitLoading] = useState(false);
   function submit(){
+    updateSubmitLoading(true);
     let teacher = (document.getElementById("teacher") as HTMLInputElement).value;
     let info = (document.getElementById("info") as HTMLInputElement).value;
     if(teacher == "") return alert("Please enter your teacher.");
@@ -136,8 +136,6 @@ export default function Request(){
     subject_select.value = "Math";
     const class_select = document.querySelector("#class") as HTMLSelectElement;
     class_select.value = "Geometry";
-    changeSubject("Math");
-    updateClass("Geometry");
     (document.querySelector("#teacher") as HTMLInputElement).value = "";
     (document.querySelector("#info") as HTMLInputElement).value = "";
     postData({
@@ -147,13 +145,18 @@ export default function Request(){
       _class: _class,
       info: info,
       uid: auth.currentUser?.uid
-    }).then((result) => {alert("Successful request!")}).catch(() => alert("There's been an error. Please try again."));
+    }).then(() => {updateSubmitLoading(false); alert("Success!")})
+    .catch(() => {updateSubmitLoading(false); alert("There's been an error. Please try again.")})
+    .then(() => {
+      changeSubject("Math");
+      updateClass("Geometry");
+    });
   }
 
   
-  if(loading){
+  if(loading || submitLoading){
     return(<Loading />)
-  } 
+  }
   if(!user){
     window.location.replace("/")
     console.log(user);
