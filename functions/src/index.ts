@@ -42,6 +42,8 @@ export const postData = onCall((request) => {
     teacher: teacher,
     info: info,
     uid: uid,
+    claimed: false,
+    tutor: "",
   }).then(() => {
     return {status: "success"};
   }).catch(() => {
