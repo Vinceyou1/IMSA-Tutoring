@@ -13,12 +13,17 @@ import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
 
 export type RequestJSON = {
-  uid: string,
-  teacher: string,
-  class: string, 
-  subject: string,
-  name: string,
-  info: string,
+  id: string,
+  data:{
+    uid: string,
+    teacher: string,
+    class: string, 
+    subject: string,
+    name: string,
+    info: string,
+    time: number,
+
+  }
 }
 
 export default function Home() {

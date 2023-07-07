@@ -62,7 +62,11 @@ export const postData = onCall((request) => {
 export const getData = onCall(() => {
   return getFirestore().collection("requests").orderBy("time").get()
   .then((snapshot) => {
-    return snapshot.docs.map((doc) => doc.data());
+    return snapshot.docs.map((doc) =>{
+      const json = doc.data();
+      const id = doc.id;
+      return ({id: id, data: json});
+    });
   }).catch(() => {
     return "error";
   });
