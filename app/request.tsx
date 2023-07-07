@@ -1,11 +1,10 @@
-type RequestProps = {
-    displayName: string,
-    body: string,
-    class: string, 
-    claimed: boolean,
-    tutor: string
-}
+import { RequestJSON } from "./page";
 
-export default function request(props: RequestProps){
-    
+export default function Request({request}:{request:RequestJSON}){
+    return(
+        <div className="bg-secondary max-w-[100%] break-words">
+            <p>{request['name']}</p>
+            <p>{request['info']}</p>
+        </div>
+    )
 }
