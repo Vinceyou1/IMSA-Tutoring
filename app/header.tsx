@@ -26,8 +26,8 @@ export default function Header(){
     return(
         <div className="h-[10%] bg-secondary dark:bg-primary flex items-center justify-between pb-1">
             <ul>
-                <li className='nav'><a href="#">Home</a></li>
-                <li className='nav'><a href="#">About</a></li>
+                <li className='nav'><a href="/">Home</a></li>
+                <li className='nav'><a href="/request">Request</a></li>
             </ul>
             {signInOut}
         </div>
