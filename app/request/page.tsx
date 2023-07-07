@@ -48,8 +48,9 @@ export default function Request(){
 
   const [subject, updateSubject] = useState("");
   
-  function changeSubject(event: React.ChangeEvent<HTMLSelectElement>) {
-    switch(event.target.value){
+  function changeSubject(value: string) {
+
+    switch(value){
       case "Math":
         updateClasses(
           <>
@@ -117,7 +118,7 @@ export default function Request(){
         );
         break;
     }
-    updateSubject(event.target.value);
+    updateSubject(value);
     setTimeout(() =>{
       let class_select = (document.getElementById("class") as HTMLSelectElement);
       updateClass(class_select.value);
@@ -130,6 +131,15 @@ export default function Request(){
   function submit(){
     let teacher = (document.getElementById("teacher") as HTMLInputElement).value;
     let info = (document.getElementById("info") as HTMLInputElement).value;
+    if(teacher == "") return alert("Please enter your teacher.");
+    const subject_select = document.querySelector("#subject") as HTMLSelectElement;
+    subject_select.value = "Math";
+    const class_select = document.querySelector("#class") as HTMLSelectElement;
+    class_select.value = "Geometry";
+    changeSubject("Math");
+    updateClass("Geometry");
+    (document.querySelector("#teacher") as HTMLInputElement).value = "";
+    (document.querySelector("#info") as HTMLInputElement).value = "";
     postData({
       teacher: teacher,
       name: auth.currentUser?.displayName,
@@ -137,7 +147,7 @@ export default function Request(){
       _class: _class,
       info: info,
       uid: auth.currentUser?.uid
-    }).then((result) => {console.log(result.data); window.location.reload();}).catch(() => alert("There's been an error. Please try again."));
+    }).then((result) => {alert("Successful request!")}).catch(() => alert("There's been an error. Please try again."));
   }
 
   
@@ -154,7 +164,7 @@ export default function Request(){
         <form className='mt-8'>
           <div className="grid gap-x-2 gap-y-4" style={{gridTemplateColumns:"max-content max-content"}}>
               <label htmlFor="subject" className='text-lg text-right text-secondary dark:text-secondary-dark'>Subject:</label>
-              <select id="subject" name="subject" className='rounded-sm text-secondary dark:text-primary-dark' onChange={changeSubject}>
+              <select id="subject" name="subject" className='rounded-sm text-secondary dark:text-primary-dark' onChange={(event) => changeSubject(event.target.value)}>
                 {subjects}
               </select>
 
@@ -173,8 +183,7 @@ export default function Request(){
       </div>
       <div className="flex justify-center mt-20">
         <button onClick={() => submit()}className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
-      </div> 
-      <>{_class}</>
+      </div>
     </div>
   )
 }
