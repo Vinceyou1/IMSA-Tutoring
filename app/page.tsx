@@ -4,11 +4,13 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Button } from '@mui/material';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
-import { getFunctions, httpsCallable } from 'firebase/functions'
+import { httpsCallable } from 'firebase/functions'
 import Loading from './loading';
-import React from 'react';
+import React, { useContext } from 'react';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import Request from './request';
+import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
+import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
 
 export type RequestJSON = {
   uid: string,
@@ -20,12 +22,10 @@ export type RequestJSON = {
 }
 
 export default function Home() {
-  const app = initFirebase();
-  const provider = new GoogleAuthProvider();
-  const auth = getAuth();
+  const functions = useContext(FirebaseFunctionsContext);
+  const auth = useContext(FirebaseAuthContext);
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
-  const functions = getFunctions(app);
 
   const [data, updateData] = React.useState(Array<RequestJSON>);
   const getData = httpsCallable(functions, 'getData');

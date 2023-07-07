@@ -4,20 +4,19 @@ import initFirebase from "@/firebase/clientApp";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Button } from "@mui/material";
+import { useContext } from 'react';
+import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
 
 export default function Header(){
-    
-    initFirebase();
     const provider = new GoogleAuthProvider();
-    const auth = getAuth();
+    const auth = useContext(FirebaseAuthContext);
     const [user, loading] = useAuthState(auth);
     let signInOut;
     const signIn = async () => {
         try{  
         const result = await signInWithPopup(auth, provider);
         console.log(result.user);
-        } catch {
-        }
+        } catch {}
     }
     user ? signInOut = (<Button className='Login out' 
         variant='contained' size="large" onClick={() => auth.signOut()}>Sign Out</Button>) : 
