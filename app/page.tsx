@@ -27,6 +27,7 @@ export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
 
+
   const [data, updateData] = React.useState(Array<RequestJSON>);
   const getData = httpsCallable(functions, 'getData');
 
@@ -37,7 +38,6 @@ export default function Home() {
       updateData((requests as Array<RequestJSON>));
     }
     fetchData();
-    console.log("here");
   }, []);
   if(loading){
     return (<Loading />)
@@ -61,12 +61,12 @@ export default function Home() {
       cols[i % num_cols].push(data[i]);
     }
     return (
-      <main className="min-h-[90%] max-w-[100%]">
-        <Grid2 container spacing={2} sx={{maxWidth:"100%"}}> 
+      <main className="max-w-[100%]">
+        <Grid2 container sx={{maxWidth:"100%", marginRight:1, marginTop: 0.5}}> 
           {cols.map((col) => {
             return (
-              <Grid2 xs={12/num_cols}>
-                { col.map((item: RequestJSON) => <Request request={item} />)}
+              <Grid2 key={cols.indexOf(col)} xs={12/num_cols}>
+                { col.map((item: RequestJSON) => <Request key={item.data.time} request={item} />)}
               </Grid2>
             )
           })}
@@ -76,7 +76,7 @@ export default function Home() {
   }
 
   return (
-    <div className='min-h-[90%] items-center justify-center'>
+    <div className='flex min-h-[90%] items-center justify-center'>
       <div>
           <h1 className='text-center'>Welcome to IMSA Tutoring!</h1>
           <h3 className='text-center'>Sign in with your IMSA email to get started</h3>
