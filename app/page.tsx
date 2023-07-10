@@ -4,10 +4,10 @@ import { useRouter } from 'next/navigation';
 import { httpsCallable } from 'firebase/functions'
 import Loading from './loading';
 import React, { useContext } from 'react';
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
-import Request from './request';
 import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
+import Grid from './grid';
+import Filter from './filter';
 
 export type RequestJSON = {
   uid: string,
@@ -26,6 +26,10 @@ export type DocumentJSON = {
   data: RequestJSON
 }
 
+export type Filter = {
+  classes: string[]
+}
+
 export default function Home() {
   const functions = useContext(FirebaseFunctionsContext);
   const auth = useContext(FirebaseAuthContext);
@@ -38,8 +42,8 @@ export default function Home() {
   const getData = httpsCallable(functions, 'getData');
 
   // Filters
-  const [subjectFilter, updateSubjectFilter] = React.useState("");
-  const [classFilter, updateClassFilter] = React.useState("");
+  const emptyFilter:Filter = {classes: []};
+  const [filter, updateFilter] = React.useState(emptyFilter);
 
   React.useEffect(() =>{
     const fetchData = async () =>{
@@ -48,14 +52,7 @@ export default function Home() {
       updateData((requests as Array<DocumentJSON>));
       updateRetrieved(true);
     }
-    const getFilters = () => {
-      const subjectItem = localStorage.getItem("subjectFilter");
-      const classItem = localStorage.getItem("classFilter");
-      updateSubjectFilter(subjectItem ? subjectItem : "");
-      updateClassFilter(classItem ? classItem : "");
-    }
     fetchData();
-    getFilters();
   }, []);
   if(loading){
     return (<Loading />)
@@ -69,49 +66,19 @@ export default function Home() {
         </main>
       )
     }
+    
+    let grid;
     if(!retrieved){
-      return <Loading />
+      grid =  <Loading />
+    } else {
+      grid = <Grid data={data} filter={filter}/>
     }
-    if(data.length == 0){
-      return(
-        <div className='h-[80%] flex justify-center items-center text-lg'>
-          <p>There are no requests at this time</p>
-        </div>
-      );
-    }
-    const filtered = JSON.parse(JSON.stringify(data));
-    for(let index = 0; index < filtered.length;){
-      if(filtered[index].data.claimed ||
-        (subjectFilter != "" && (filtered[index].data.subject != subjectFilter)) ||
-        (classFilter != "" && (filtered[index].data.class != classFilter))
-      ) {
-        filtered.splice(index, 1);
-      } else {index++;}
-    }
-    if(filtered.length == 0){
-      return(
-        <div className='h-[80%] flex justify-center items-center text-lg'>
-          <p>There are no requests with the selected filters</p>
-        </div>
-      )
-    }
-    let num_cols = screen.height < screen.width ? 4 : 1;
-    let cols: DocumentJSON[][] = [[filtered[0]]];
-    for(let i = 1; i < num_cols && i < filtered.length; i++){ cols.push([filtered[i]]);}
-    for(let i = num_cols; i < filtered.length; i++){
-      cols[i % num_cols].push(filtered[i]);
-    }
+    const isMobile = screen.height < screen.width;
+    let filter_format = isMobile ? " flex flex-row" : "";
     return (
-      <main className="max-w-[100%]">
-        <Grid2 container sx={{maxWidth:"100%", marginRight:1, marginTop: 0.5}}> 
-          {cols.map((col) => {
-            return (
-              <Grid2 key={cols.indexOf(col)} xs={12/num_cols}>
-                { col.map((item: DocumentJSON) => <Request key={item.data.time} request={item} />)}
-              </Grid2>
-            )
-          })}
-        </Grid2>
+      <main className={"max-w-[100%] h-[90%] " + filter_format}>
+        <Filter />
+        {grid}
       </main>
     );
   }
