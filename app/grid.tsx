@@ -1,3 +1,4 @@
+'use client'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import Request from './request';
 import { DocumentJSON, Filter } from "./page";
@@ -32,9 +33,8 @@ export default function Grid({data, filter} : {data: DocumentJSON[], filter: Fil
         for(let i = num_cols; i < filtered.length; i++){
           cols[i % num_cols].push(filtered[i]);
         }
-        const grid_width = isMobile ? "90%" : "100%";
         grid = (
-        <Grid2 container sx={{width: grid_width, marginRight:1, display: "flex"}}> 
+        <Grid2 container sx={{marginLeft: 0.5, marginRight: 0.5, display: "flex"}}> 
           {cols.map((col) => {
             return (
               <Grid2 key={cols.indexOf(col)} xs={12/num_cols}>

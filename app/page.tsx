@@ -61,7 +61,7 @@ export default function Home() {
     const email = user.email;
     if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
       return (
-        <main className="flex items-center justify-center min-h-[90%]">
+        <main className="min-h-[90%]">
           <p className='text-center'>Please reload the page and sign in with your IMSA email.</p>
         </main>
       )
@@ -73,13 +73,11 @@ export default function Home() {
     } else {
       grid = <Grid data={data} filter={filter}/>
     }
-    const isMobile = screen.height < screen.width;
-    let filter_format = isMobile ? " flex flex-row" : "";
     return (
-      <main className={"max-w-[100%] h-[90%] " + filter_format}>
-        <Filter />
+      <div className={"w-[100%] h-[90%]"}>
+        <Filter filter={filter} updateFilter={updateFilter}/>
         {grid}
-      </main>
+      </div>
     );
   }
 
