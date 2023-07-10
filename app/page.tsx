@@ -1,7 +1,4 @@
 "use client";
-import initFirebase from '@/firebase/clientApp';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { Button } from '@mui/material';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
 import { httpsCallable } from 'firebase/functions'
@@ -13,18 +10,20 @@ import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
 
 export type RequestJSON = {
+  uid: string,
+  teacher: string,
+  class: string, 
+  subject: string,
+  name: string,
+  info: string,
+  time: number,
+  claimed: boolean,
+  tutor: string,
+}
+
+export type DocumentJSON = {
   id: string,
-  data:{
-    uid: string,
-    teacher: string,
-    class: string, 
-    subject: string,
-    name: string,
-    info: string,
-    time: number,
-    claimed: boolean,
-    tutor: string,
-  }
+  data: RequestJSON
 }
 
 export default function Home() {
@@ -34,7 +33,7 @@ export default function Home() {
   const router = useRouter();
 
 
-  const [data, updateData] = React.useState(Array<RequestJSON>);
+  const [data, updateData] = React.useState(Array<DocumentJSON>);
   const [retrieved, updateRetrieved] = React.useState(false);
   const getData = httpsCallable(functions, 'getData');
 
@@ -42,20 +41,11 @@ export default function Home() {
   const [subjectFilter, updateSubjectFilter] = React.useState("");
   const [classFilter, updateClassFilter] = React.useState("");
 
-  function filterData(value:RequestJSON, index:number, arr:Array<RequestJSON>) {
-    if(value['data']['claimed'] ||
-      (subjectFilter != "" && value['data']['subject'] != subjectFilter) ||
-      (classFilter != "" && value['data']['subject'] != classFilter)
-    ) {
-      arr.splice(index, 1);
-    }
-  }
-
   React.useEffect(() =>{
     const fetchData = async () =>{
       let res = await getData();
       let requests = res.data;
-      updateData((requests as Array<RequestJSON>));
+      updateData((requests as Array<DocumentJSON>));
       updateRetrieved(true);
     }
     const getFilters = () => {
@@ -90,7 +80,14 @@ export default function Home() {
       );
     }
     const filtered = JSON.parse(JSON.stringify(data));
-    filtered.filter(filterData);
+    for(let index = 0; index < filtered.length;){
+      if(filtered[index].data.claimed ||
+        (subjectFilter != "" && (filtered[index].data.subject != subjectFilter)) ||
+        (classFilter != "" && (filtered[index].data.class != classFilter))
+      ) {
+        filtered.splice(index, 1);
+      } else {index++;}
+    }
     if(filtered.length == 0){
       return(
         <div className='h-[80%] flex justify-center items-center text-lg'>
@@ -98,8 +95,8 @@ export default function Home() {
         </div>
       )
     }
-    let num_cols = screen.height < screen.width ? 4 : 2;
-    let cols: RequestJSON[][] = [[filtered[0]]];
+    let num_cols = screen.height < screen.width ? 4 : 1;
+    let cols: DocumentJSON[][] = [[filtered[0]]];
     for(let i = 1; i < num_cols && i < filtered.length; i++){ cols.push([filtered[i]]);}
     for(let i = num_cols; i < filtered.length; i++){
       cols[i % num_cols].push(filtered[i]);
@@ -110,13 +107,13 @@ export default function Home() {
           {cols.map((col) => {
             return (
               <Grid2 key={cols.indexOf(col)} xs={12/num_cols}>
-                { col.map((item: RequestJSON) => <Request key={item.data.time} request={item} />)}
+                { col.map((item: DocumentJSON) => <Request key={item.data.time} request={item} />)}
               </Grid2>
             )
           })}
         </Grid2>
       </main>
-    )
+    );
   }
 
   return (
