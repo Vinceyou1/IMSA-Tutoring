@@ -145,7 +145,7 @@ export default function Request(){
       _class: _class,
       info: info,
       uid: auth.currentUser?.uid
-    }).then(() => {updateSubmitLoading(false); alert("Success!")})
+    }).then(() => {updateSubmitLoading(false)})
     .catch(() => {updateSubmitLoading(false); alert("There's been an error. Please try again.")})
     .then(() => {
       changeSubject("Math");
@@ -177,15 +177,15 @@ export default function Request(){
               </select>
               
               <label htmlFor="teacher" className='text-lg text-right text-secondary dark:text-secondary-dark'>Teacher:</label> 
-              <input type="text" id="teacher" name="teacher" className='rounded-sm text-secondary dark:text-primary-dark'></input>
+              <input type="text" id="teacher" name="teacher" className='rounded-sm text-secondary dark:text-primary-dark pl-1'></input>
 
               <label htmlFor="info" className='text-lg text-right text-secondary dark:text-secondary-dark'>Additional Info:</label> 
-              <input type="text" id="info" name="info" className='rounded-sm text-secondary dark:text-primary-dark'></input>
+              <input type="text" id="info" name="info" className='rounded-sm text-secondary dark:text-primary-dark pl-1'></input>
           </div>
         </form>
       </div>
       <div className="flex justify-center mt-20">
-        <button onClick={() => submit()}className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
+        <button id='submit' onClick={() => submit()} className="rounded-md text-2xl bg-secondary dark:bg-secondary-dark p-4 text-primary dark:text-primary-dark">Submit</button>
       </div>
     </div>
   )
