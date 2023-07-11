@@ -6,8 +6,8 @@ import Loading from './loading';
 import React, { useContext } from 'react';
 import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
-import Grid from './grid';
-import Filter from './filter';
+import Grid from './home_components/grid';
+import Filter from './home_components/filter';
 
 export type RequestJSON = {
   uid: string,

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { Filter } from "./page";
+import { Filter } from "../page";
 
 export default function Filter({filter, updateFilter} : {filter: Filter, updateFilter: React.Dispatch<React.SetStateAction<Filter>>}){
     const [active, setActive] = useState(false);

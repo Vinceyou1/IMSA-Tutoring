@@ -5,7 +5,7 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Button } from "@mui/material";
 import { useContext } from 'react';
-import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
+import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
 
 export default function Header(){
     const provider = new GoogleAuthProvider();

@@ -1,7 +1,7 @@
 'use client'
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import Request from './request';
-import { DocumentJSON, Filter } from "./page";
+import { DocumentJSON, Filter } from "../page";
 
 export default function Grid({data, filter} : {data: DocumentJSON[], filter: Filter}){
     let grid;

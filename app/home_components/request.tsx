@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
-import { DocumentJSON } from "./page";
+import { DocumentJSON } from "../page";
 import { useContext } from "react";
-import { FirebaseAuthContext } from "./contexts/FirebaseAuthContext";
+import { FirebaseAuthContext } from "../contexts/FirebaseAuthContext";
 
 export default function Request({request}:{request:DocumentJSON}){
     const router = useRouter();

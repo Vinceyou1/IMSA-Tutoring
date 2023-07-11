@@ -1,7 +1,7 @@
 'use client'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import Header from './header'
+import Header from './header/header'
 import initFirebase from '@/firebase/clientApp'
 import { getAuth } from 'firebase/auth'
 import { FirebaseAuthContext } from './contexts/FirebaseAuthContext'
