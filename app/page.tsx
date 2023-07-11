@@ -49,6 +49,14 @@ export default function Home() {
 
   const [isMobile, updateMobile] = React.useState(false);
 
+  function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      width,
+      height
+    };
+  }
+
   React.useEffect(() =>{
     const fetchData = async () =>{
       let res = await getData();
@@ -56,12 +64,16 @@ export default function Home() {
       updateData((requests as Array<DocumentJSON>));
       updateRetrieved(true);
     }
-    const getDevice = () => {
-      updateMobile(screen.height > screen.width);
+
+    const handleResize = () => {
+      updateMobile(getWindowDimensions().height > getWindowDimensions().width);
     }
-    getDevice();
+    handleResize();
+    window.addEventListener('resize', handleResize);
     fetchData();
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   if(loading){
     return (<Loading />)
   }
