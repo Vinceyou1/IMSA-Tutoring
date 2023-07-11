@@ -3,13 +3,12 @@ import { DocumentJSON } from "../page";
 import { useContext } from "react";
 import { FirebaseAuthContext } from "../contexts/FirebaseAuthContext";
 
-export default function Request({request}:{request:DocumentJSON}){
-    const router = useRouter();
+export default function Request({request, deleteItem}:{request:DocumentJSON, deleteItem: (request: DocumentJSON) => void}){
     const uid = useContext(FirebaseAuthContext).currentUser?.uid;
     let button;
     if(request.data.uid == uid) {
         button = (
-            <button className="border-solid h-fit p-4 border-[red] border-2 rounded font-bold text-[red]">
+            <button id={"delete: " + request.id} onClick={() => deleteItem(request)} className="border-solid h-fit p-4 border-[red] border-2 rounded font-bold text-[red]">
                 DELETE</button>
         )
     } else {
