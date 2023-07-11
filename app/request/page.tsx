@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "../loading";
+import { classes } from "../classes/classes";
 
 export default function Request(){
     
@@ -20,19 +21,9 @@ export default function Request(){
 
   const [classList, updateClasses] = useState(
     <>
-      <option value="Geometry">Geometry</option>
-      <option value="MI I/II">MI I/II</option>
-      <option value="MI II">MI II</option>
-      <option value="MI III">MI III</option>
-      <option value="MI IV">MI IV</option>
-      <option value="Survey of Calculus">Survey of Calculus</option>
-      <option value="AB I">AB I</option>
-      <option value="AB II">AB II</option>
-      <option value="BC I">BC I</option>
-      <option value="BC II">BC II</option>
-      <option value="BC III">BC III</option>
-      <option value="BC I/II">BC I/II</option>
-      <option value="BC II/III">BC II/III</option>
+      {classes.Math.map((name) =>{
+        return(<option value={name}>{name}</option>)
+      })}
     </>
   );
   const subjects = (
@@ -53,66 +44,54 @@ export default function Request(){
       case "Math":
         updateClasses(
           <>
-            <option value="Geometry">Geometry</option>
-            <option value="MI I/II">MI I/II</option>
-            <option value="MI II">MI II</option>
-            <option value="MI III">MI III</option>
-            <option value="MI IV">MI IV</option>
-            <option value="Survey of Calculus">Survey of Calculus</option>
-            <option value="AB I">AB I</option>
-            <option value="AB II">AB II</option>
-            <option value="BC I">BC I</option>
-            <option value="BC II">BC II</option>
-            <option value="BC III">BC III</option>
-            <option value="BC I/II">BC I/II</option>
-            <option value="BC II/III">BC II/III</option>
+            {classes.Math.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
         );
         break;
       case "Computer Science":
         updateClasses(
           <>
-            <option value="CSI">CSI</option>
-            <option value="OOP">OOP</option>
-            <option value="Advanced Programming">Advanced Programming</option>
-            <option value="Microcontroller Applications">Microcontroller Applications</option>
-            <option value="Web Technologies">Web Technologies</option>
+            {classes.CS.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
-        ); 
+        );
         break;
       case "Science":
         updateClasses(
           <>
-            <option value="MSI">MSI</option>
-            <option value="SI-Chemistry">SI-Chemistry</option>
-            <option value="SI-Physics">SI-Physics</option>
+            {classes.Science.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
         );
         break;
       case "Language":
         updateClasses(
           <>
-            <option value="Spanish">Spanish</option>
-            <option value="French">French</option>
-            <option value="German">German</option>
-            <option value="Mandarin">Mandarin</option>
+            {classes.Language.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
-        ); 
+        );
         break;
       case "English":
         updateClasses(
           <>
-            <option value="LE I">LE I</option>
-            <option value="LE II">LE II</option>
-            <option value="LE III: American">LE III: American</option>
-            <option value="LE III: British">LE III: British</option>
-            <option value="LE III: World">LE III: World</option>
+            {classes.English.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
-        ); break;
+        ); 
+        break;
       case "History and SS":
         updateClasses(
           <>
-            <option value="American Studies">American Studies</option>
+            {classes.History_And_SS.map((name) =>{
+              return(<option value={name}>{name}</option>)
+            })}
           </>
         );
         break;
