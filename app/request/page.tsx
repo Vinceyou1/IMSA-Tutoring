@@ -22,7 +22,7 @@ export default function Request(){
   const [classList, updateClasses] = useState(
     <>
       {classes.Math.map((name) =>{
-        return(<option value={name}>{name}</option>)
+        return(<option key={name} value={name}>{name}</option>)
       })}
     </>
   );
@@ -45,7 +45,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.Math.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         );
@@ -54,7 +54,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.CS.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         );
@@ -63,7 +63,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.Science.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         );
@@ -72,7 +72,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.Language.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         );
@@ -81,7 +81,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.English.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         ); 
@@ -90,7 +90,7 @@ export default function Request(){
         updateClasses(
           <>
             {classes.History_And_SS.map((name) =>{
-              return(<option value={name}>{name}</option>)
+              return(<option key={name} value={name}>{name}</option>)
             })}
           </>
         );
