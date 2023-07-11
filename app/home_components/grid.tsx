@@ -5,7 +5,7 @@ import { DocumentJSON, Filter } from "../page";
 
 export default function Grid({data, filter} : {data: DocumentJSON[], filter: Filter}){
     let grid;
-    const isMobile = screen.height < screen.width;
+    const isMobile = screen.height > screen.width;
     if(data.length == 0){
         grid = (
           <div className='h-[80%] flex justify-center items-center text-lg'>
@@ -27,7 +27,7 @@ export default function Grid({data, filter} : {data: DocumentJSON[], filter: Fil
                 </div>
             )
         }
-        const num_cols = isMobile ? 4 : 1;
+        const num_cols = isMobile ? 1 : 4;
         let cols: DocumentJSON[][] = [[filtered[0]]];
         for(let i = 1; i < num_cols && i < filtered.length; i++){ cols.push([filtered[i]]);}
         for(let i = num_cols; i < filtered.length; i++){
