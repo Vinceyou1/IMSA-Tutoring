@@ -66,9 +66,26 @@ export const getData = onCall(() => {
 
 export const getDocument = onCall((request) =>{
   return getFirestore().doc("requests/" + request.data.id).get()
-  .then((snapshot) => {
-    return snapshot.data();
+  .then(() => {
+    return {
+      Status: "Success",
+    };
   }).catch(() => {
-    return "error";
+    return {
+      Status: "Error",
+    };
+  });
+});
+
+export const deleteDocument = onCall((request) => {
+  return getFirestore().doc("requests/" + request.data.id).delete()
+  .then(() => {
+    return {
+      Status: "Success",
+    };
+  }).catch(() => {
+    return {
+      Status: "Error",
+    };
   });
 });
