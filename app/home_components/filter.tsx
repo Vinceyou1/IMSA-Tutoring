@@ -66,6 +66,30 @@ function getClasses(filter: Filter, updateFilter: (new_filter : Filter) => void,
     updateClassFilters(class_list);
 }
 
+function selectAll(filter: Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
+    const subject = (document.getElementById("subject") as HTMLSelectElement).value;
+    let class_list = subjectToClassArray(subject);
+    let temp = filter;
+    class_list.forEach((element) => {
+        if(!temp.classes.includes(element)){
+            temp.classes.push(element);
+        }
+    });
+    getClasses(temp, updateFilter, updateClassFilters);
+}
+
+function clear(filter: Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
+    const subject = (document.getElementById("subject") as HTMLSelectElement).value;
+    let class_list = subjectToClassArray(subject);
+    let temp = filter;
+    for(let i = 0; i < temp.classes.length;){
+        if(class_list.includes(temp.classes[i])){
+            temp.classes.splice(i, 1);
+        } else i++;
+    }
+    getClasses(temp, updateFilter, updateClassFilters);
+}
+
 export default function Filter({filter, updateFilter} : {filter: Filter, updateFilter: (new_filter : Filter) => void}){
     const [active, setActive] = useState(false);
     const isMobile = useContext(MobileContext);
@@ -87,22 +111,23 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
                 {arrow} <br/>
                 Filter
             </h3>
-            <div className="pt-4 pl-4 text-lg">
-                <label htmlFor="subject">Subject:&emsp;</label>
-                <select id="subject" className="bg-primary dark:bg-primary-dark border-2 rounded-none" onChange={() => getClasses(filter, updateFilter, updateClassFilters)}>
+            <div className="pt-4 pl-4">
+                <label className="text-lg" htmlFor="subject">Subject:&emsp;</label>
+                <select id="subject" className="bg-primary dark:bg-primary-dark border-2 rounded-none text-lg" onChange={() => getClasses(filter, updateFilter, updateClassFilters)}>
                     <option value="Math">Math</option>
-                    <option value="CS">Computer Science</option>
+                    <option value="CS">CS</option>
                     <option value="Science">Science</option>
                     <option value="Language">Language</option>
                     <option value="English">English</option>
-                    <option value="History">History and SS</option>
-                </select> 
+                    <option value="History">History</option>
+                </select>
+                <button className="pl-2 pr-2" onClick={() => selectAll(filter, updateFilter, updateClassFilters)}>Select All</button>|
+                <button className="pl-2" onClick={() => clear(filter, updateFilter, updateClassFilters)}>Clear</button>
             </div>
             <div className="overflow-y-auto relative h-auto">
                 <Grid2 container sx={{marginLeft: 2, marginTop: 1, height: "100%"}}>
                     {classFilters}
                 </Grid2>
-
             </div>
         </div>
     )
