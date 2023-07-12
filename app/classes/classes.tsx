@@ -40,7 +40,7 @@ export const classes = {
         "LE III: British",
         "LE III: World",
     ],
-    History_And_SS:[
+    History:[
         "American Studies"
     ]
 };

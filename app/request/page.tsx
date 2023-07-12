@@ -33,7 +33,7 @@ export default function Request(){
       <option value="Science">Science</option>
       <option value="Language">Language</option>
       <option value="English">English</option>
-      <option value="History and SS">History and SS</option>
+      <option value="History">History and SS</option>
     </>
   )
 
@@ -86,10 +86,10 @@ export default function Request(){
           </>
         ); 
         break;
-      case "History and SS":
+      case "History":
         updateClasses(
           <>
-            {classes.History_And_SS.map((name) =>{
+            {classes.History.map((name) =>{
               return(<option key={name} value={name}>{name}</option>)
             })}
           </>
