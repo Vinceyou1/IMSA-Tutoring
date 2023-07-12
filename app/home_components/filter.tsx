@@ -9,7 +9,6 @@ import { classes } from "../classes/classes";
 function FilterClass(classname: string, filter:Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
     let active = filter.classes.includes(classname);
     function switchClass(){
-        console.log(active);
         let temp = JSON.parse(JSON.stringify(filter)) as Filter;
         if(active){
             for(let i = 0; i < temp.classes.length; i++){

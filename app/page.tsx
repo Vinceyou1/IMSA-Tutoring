@@ -9,6 +9,8 @@ import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
 import Grid from './home_components/grid';
 import Filter from './home_components/filter';
 import { MobileContext } from './contexts/MobileContext';
+import { classes } from './classes/classes';
+import useDeepCompareEffect from 'use-deep-compare-effect';
 
 
 export type RequestJSON = {
@@ -38,14 +40,19 @@ export default function Home() {
   const [user, loading] = useAuthState(auth);
   const router = useRouter();
 
-  const [data, updateData] = React.useState(Array<DocumentJSON>);
+  const [data, updateData] = React.useState([] as Array<DocumentJSON>);
   const [retrieved, updateRetrieved] = React.useState(false);
   const getData = httpsCallable(functions, 'getData');
 
   // Filters
-  const emptyFilter:Filter = {classes: [
-  ]};
-  const [filter, updateFilter] = React.useState(emptyFilter);
+  const defaultFilter:Filter = {classes: []};
+  for (const [key, value] of Object.entries(classes)) {
+    value.forEach((element) => {
+      defaultFilter.classes.push(element);
+    })
+  }
+  
+  const [filter, updateFilter] = React.useState(defaultFilter);
 
   const [isMobile, updateMobile] = React.useState(false);
 
@@ -87,17 +94,16 @@ export default function Home() {
       )
     }
     
-    let grid;
-    if(!retrieved){
-      grid =  <Loading />
-    } else {
-      grid = <Grid requests={data} filter={filter}/>
+
+    const changeFilter = (new_filter: Filter) => {
+      updateFilter(new_filter);
     }
+
     return (
       <MobileContext.Provider value={isMobile}>
       <div className={"w-[100%] h-[90%]"}>
-        <Filter filter={filter} updateFilter={updateFilter}/>
-        {grid}
+        <Filter filter={filter} updateFilter={(new_filter: Filter) => changeFilter(new_filter)}/>
+        <Grid requests={data} filter={filter} retrieved={retrieved}/>
       </div>
       </MobileContext.Provider>
     );
