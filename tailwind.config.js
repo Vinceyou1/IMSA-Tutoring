@@ -20,6 +20,8 @@ module.exports = {
       'secondary-dark': '#e7e5e4',
       'request': 'white',
       'request-dark': '#203040',
+      'filter-active': '#bae6fd',
+      'filter-active-dark': '#0369a1'
     }
   },
   plugins: [],
