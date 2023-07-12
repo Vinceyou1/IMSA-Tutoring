@@ -10,20 +10,17 @@ function FilterClass(classname: string, filter:Filter, updateFilter: (new_filter
     let active = filter.classes.includes(classname);
     function switchClass(){
         console.log(active);
+        let temp = JSON.parse(JSON.stringify(filter)) as Filter;
         if(active){
-            let temp = filter;
-            for(let i = 0; i < filter.classes.length; i++){
+            for(let i = 0; i < temp.classes.length; i++){
                 if(temp.classes[i] === classname){
                     temp.classes.splice(i, 1); break;
                 }
             }
-            updateFilter(temp);
         } else {
-            let temp = filter;
             temp.classes.push(classname);
-            updateFilter(temp);
         }
-        getClasses(filter, updateFilter, updateClassFilters);
+        getClasses(temp, updateFilter, updateClassFilters);
     }
     function bg(){
         return(active ? "bg-filter-active dark:bg-filter-active-dark" : "bg-primary dark:bg-primary-dark");
@@ -57,7 +54,7 @@ function getClasses(filter: Filter, updateFilter: (new_filter : Filter) => void,
     const subject = (document.getElementById("subject") as HTMLSelectElement).value
     let class_list:JSX.Element[] = [];
     let options = subjectToClassArray(subject);
-        
+    updateFilter(filter);  
     options.forEach(element => {
         class_list.push(
             FilterClass(element, filter, updateFilter, updateClassFilters)
@@ -69,7 +66,7 @@ function getClasses(filter: Filter, updateFilter: (new_filter : Filter) => void,
 function selectAll(filter: Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
     const subject = (document.getElementById("subject") as HTMLSelectElement).value;
     let class_list = subjectToClassArray(subject);
-    let temp = filter;
+    let temp = JSON.parse(JSON.stringify(filter));
     class_list.forEach((element) => {
         if(!temp.classes.includes(element)){
             temp.classes.push(element);
@@ -81,7 +78,7 @@ function selectAll(filter: Filter, updateFilter: (new_filter : Filter) => void, 
 function clear(filter: Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
     const subject = (document.getElementById("subject") as HTMLSelectElement).value;
     let class_list = subjectToClassArray(subject);
-    let temp = filter;
+    let temp = JSON.parse(JSON.stringify(filter));
     for(let i = 0; i < temp.classes.length;){
         if(class_list.includes(temp.classes[i])){
             temp.classes.splice(i, 1);
@@ -92,8 +89,6 @@ function clear(filter: Filter, updateFilter: (new_filter : Filter) => void, upda
 
 export default function Filter({filter, updateFilter} : {filter: Filter, updateFilter: (new_filter : Filter) => void}){
     const [active, setActive] = useState(false);
-    const isMobile = useContext(MobileContext);
-    const grid_elements = isMobile ? 3 : 12;
     let styles = active ? "before:top-[95%] duration-500 top-[25%]": 
         "before:top-[50%] duration-300 top-[92.5%]";
     let arrow = active ? '\u25BC' : '\u25B2';
