@@ -29,7 +29,7 @@ export default function Request(){
   const subjects = (
     <>
       <option value="Math">Math</option>
-      <option value="Computer Science">Computer Science</option>
+      <option value="Computer Science">CS</option>
       <option value="Science">Science</option>
       <option value="Language">Language</option>
       <option value="English">English</option>
