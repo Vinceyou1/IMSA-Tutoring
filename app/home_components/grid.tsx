@@ -12,17 +12,18 @@ export type status = {
   Status: string
 }
 
-export default function Grid({requests, filter, retrieved} : {requests: DocumentJSON[], filter: Filter, retrieved:boolean}){
+export default function Grid({requests, updateRequests, filter, retrieved} : {requests: DocumentJSON[], updateRequests: React.Dispatch<React.SetStateAction<DocumentJSON[]>>, filter: Filter, retrieved:boolean}){
     let grid;
     const isMobile = useContext(MobileContext);
     const [cols, updateCols] = useState([[{id: "not rendered"} as DocumentJSON]]);
+    const [filtered, updateFiltered] = useState(false);
     const num_cols = isMobile ? 1 : 4;
     
     const functions = useContext(FirebaseFunctionsContext);
     const deleteDocument = httpsCallable(functions, "deleteDocument");
 
     function dataUpdate(temp: DocumentJSON[]){
-      let filtered = [...requests];
+      let filtered = temp;
       for(let index = 0; index < filtered.length;){
         if(filtered[index].data.claimed || (!(filter.classes.includes(filtered[index].data.class)))
         ) {
@@ -38,6 +39,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
         temp_cols[i % num_cols].push(filtered[i]);
       }
       updateCols(temp_cols);
+      updateFiltered(true);
     }
     
 
@@ -55,6 +57,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
             }
           });
           dataUpdate(temp);
+          updateRequests(temp);
         } else {
           alert("There was an error deleting the request");
           (deleteButton as HTMLButtonElement).innerHTML = "DELETE";
@@ -80,33 +83,10 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
         </div>
       );
     } else {
-      // for(let index = 0; index < data.length;){
-      //     if(data[index].data.claimed || (filter.classes.length != 0 && !(data[index].data.class in filter.classes))
-      //     ) {
-      //         data.splice(index, 1);
-      //     } else {index++;}
-      // }
-      // if(data.length == 0){
-      //     return(
-      //         <div className='h-[80%] flex justify-center items-center text-lg'>
-      //         <p>There are no requests with the selected filters</p>
-      //         </div>
-      //     )
-      // }
-      // const num_cols = isMobile ? 1 : 4;
-      // let cols: DocumentJSON[][] = [[data[0]]];
-      // for(let i = 1; i < num_cols && i < data.length; i++){ cols.push([data[i]]);}
-      // for(let i = num_cols; i < data.length; i++){
-      //   cols[i % num_cols].push(data[i]);
-      // }
+      if(!filtered){
+        return (<Loading />);
+      }
       if(cols.length == 0){
-        let bool = false;
-        requests.forEach((element) => {
-          if(filter.classes.includes(element.data.class)){
-            bool = true;
-          }
-        });
-        if(bool) return <Loading />
         return(
           <div className='h-[80%] flex justify-center items-center text-lg text-center'>
             <p>There are no requests with the selected filters</p>

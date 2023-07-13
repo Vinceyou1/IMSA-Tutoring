@@ -10,7 +10,6 @@ import Grid from './home_components/grid';
 import Filter from './home_components/filter';
 import { MobileContext } from './contexts/MobileContext';
 import { classes } from './classes/classes';
-import useDeepCompareEffect from 'use-deep-compare-effect';
 
 
 export type RequestJSON = {
@@ -34,6 +33,17 @@ export type Filter = {
   classes: string[]
 }
 
+export function getAllClasses(){
+  let temp_filter:Filter = {classes:[]};
+  for (const [key, value] of Object.entries(classes)) {
+    value.forEach((element) => {
+      temp_filter.classes.push(element);
+    })
+  }
+  return temp_filter
+}
+
+
 export default function Home() {
   const functions = useContext(FirebaseFunctionsContext);
   const auth = useContext(FirebaseAuthContext);
@@ -45,16 +55,7 @@ export default function Home() {
 
   // Filters
 
-  function getAllClasses(){
-    let temp_filter:Filter = {classes:[]};
-    for (const [key, value] of Object.entries(classes)) {
-      value.forEach((element) => {
-        temp_filter.classes.push(element);
-      })
-    }
-    return temp_filter
-  }
-
+  
   const defaultFilter:Filter = getAllClasses();
   
   const [filter, updateFilter] = React.useState(defaultFilter);
@@ -123,7 +124,7 @@ export default function Home() {
       <MobileContext.Provider value={isMobile}>
       <div className={"w-[100%] h-[90%]"}>
         <Filter filter={filter} updateFilter={(new_filter: Filter) => changeFilter(new_filter)}/>
-        <Grid requests={data} filter={filter} retrieved={retrieved}/>
+        <Grid requests={data} updateRequests={updateData} filter={filter} retrieved={retrieved}/>
       </div>
       </MobileContext.Provider>
     );
