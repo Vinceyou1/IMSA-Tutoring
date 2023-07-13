@@ -100,8 +100,15 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
       //   cols[i % num_cols].push(data[i]);
       // }
       if(cols.length == 0){
+        let bool = false;
+        requests.forEach((element) => {
+          if(filter.classes.includes(element.data.class)){
+            bool = true;
+          }
+        });
+        if(bool) return <Loading />
         return(
-          <div className='h-[80%] flex justify-center items-center text-lg'>
+          <div className='h-[80%] flex justify-center items-center text-lg text-center'>
             <p>There are no requests with the selected filters</p>
           </div>
         )

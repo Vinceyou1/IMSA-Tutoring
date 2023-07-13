@@ -45,12 +45,18 @@ export default function Home() {
   const getData = httpsCallable(functions, 'getData');
 
   // Filters
-  const defaultFilter:Filter = {classes: []};
-  for (const [key, value] of Object.entries(classes)) {
-    value.forEach((element) => {
-      defaultFilter.classes.push(element);
-    })
+
+  function getAllClasses(){
+    let temp_filter:Filter = {classes:[]};
+    for (const [key, value] of Object.entries(classes)) {
+      value.forEach((element) => {
+        temp_filter.classes.push(element);
+      })
+    }
+    return temp_filter
   }
+
+  const defaultFilter:Filter = getAllClasses();
   
   const [filter, updateFilter] = React.useState(defaultFilter);
 
