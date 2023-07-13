@@ -1,6 +1,6 @@
 'use client'
 import { useContext, useEffect, useState } from "react";
-import { Filter } from "../page";
+import { Filter, getAllClasses } from "../page";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { MobileContext } from "../contexts/MobileContext";
 import { classes } from "../classes/classes";
@@ -28,7 +28,7 @@ function FilterClass(classname: string, filter:Filter, updateFilter: (new_filter
         return(active ? "bg-filter-active dark:bg-filter-active-dark" : "bg-primary dark:bg-primary-dark");
     }
     return (
-        <button key={classname} onClick={switchClass} className={bg() + " p-2 mr-2 mb-1 rounded-xl  border-2 border-secondary dark:border-secondary-dark"}>
+        <button key={classname} onClick={switchClass} className={bg() + " p-2 mr-2 mb-2 rounded-xl  border-2 border-secondary dark:border-secondary-dark"}>
             {classname}
         </button>
     )
@@ -91,10 +91,9 @@ function clear(filter: Filter, updateFilter: (new_filter : Filter) => void, upda
 
 export default function Filter({filter, updateFilter} : {filter: Filter, updateFilter: (new_filter : Filter) => void}){
     const functions = useContext(FirebaseFunctionsContext);
+    const isMobile = useContext(MobileContext);
     const [active, setActive] = useState(false);
-    let styles = active ? "before:top-[95%] duration-500 top-[25%]": 
-        "before:top-[50%] duration-300 top-[92.5%]";
-    let arrow = active ? '\u25BC' : '\u25B2';
+    
     
     const empty : JSX.Element[] = [];
     const [classFilters, updateClassFilters] = useState(empty);
@@ -112,32 +111,40 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
             }
         })
     }
-
+    const divstyle = (active ? "duration-500 " + (isMobile ? "top-[40%]" : "top-[80%]"): 
+    "duration-300 top-[92%]") + " " + (isMobile ? "h-[60%]" : "h-[20%]" ) + " ";
     return(
-        <div className={styles + " bg-primary dark:bg-primary-dark h-[75%] ease-in-out w-[100%] fixed"}>
-            <h3 onClick={() => setActive(!active)} className="cursor-pointer trailing rounded-t-xl border-t-8 box-border border-t-secondary dark:border-t-secondary-dark text-center text-primary dark:text-primary-dark text-sm pl-4 h-[8vh] bg-secondary dark:bg-secondary-dark">
-                {arrow} <br/>
+        <div className={divstyle + "bg-primary dark:bg-primary-dark ease-in-out w-[100%] fixed "}>
+            <h3 onClick={() => setActive(!active)} className= { (isMobile ? "h-[15%]": "h-[40%]") + " " + "cursor-pointer trailing rounded-t-xl border-t-8 box-border border-t-secondary dark:border-t-secondary-dark text-center text-primary dark:text-primary-dark text-sm pl-4 bg-secondary dark:bg-secondary-dark"}>
+                {active ? '\u25BC' : '\u25B2'} <br/>
                 Filter
             </h3>
-            <div className="pt-4 pl-4">
-                <label className="text-lg" htmlFor="subject">Subject:&emsp;</label>
-                <select id="subject" className="bg-primary dark:bg-primary-dark border-2 rounded-none text-lg" onChange={() => getClasses(filter, updateFilter, updateClassFilters)}>
-                    <option value="Math">Math</option>
-                    <option value="CS">CS</option>
-                    <option value="Science">Science</option>
-                    <option value="Language">Language</option>
-                    <option value="English">English</option>
-                    <option value="History">History</option>
-                </select>
-                <button className="pl-2 pr-2" onClick={() => selectAll(filter, updateFilter, updateClassFilters)}>Select All</button>|
-                <button className="pl-2" onClick={() => clear(filter, updateFilter, updateClassFilters)}>Clear</button>
+            <div className={"flex justify-between" + " " + (isMobile ? "w-full flex-col h-[85%]": "flex-row h-[60%] w-[85%] ml-auto mr-auto")}>
+                <div className={isMobile ? "": "flex flex-col justify-center h-full"}>
+                    <div className={"pt-4 " + (isMobile ? "mr-auto ml-auto w-fit":" ml-4 mr-4")}>
+                        <label className="text-lg" htmlFor="subject">Subject:&emsp;</label>
+                        <select id="subject" className="bg-primary dark:bg-primary-dark border-2 rounded-none text-lg" onChange={() => getClasses(filter, updateFilter, updateClassFilters)}>
+                            <option value="Math">Math</option>
+                            <option value="CS">CS</option>
+                            <option value="Science">Science</option>
+                            <option value="Language">Language</option>
+                            <option value="English">English</option>
+                            <option value="History">History</option>
+                        </select>
+                        <button className="pl-2 pr-2" onClick={() => selectAll(filter, updateFilter, updateClassFilters)}>Select All</button>|
+                        <button className="pl-2" onClick={() => clear(filter, updateFilter, updateClassFilters)}>Clear</button>
+                    </div>
+                    <div className={"mt-2 h-auto " + (isMobile ? "block ml-6 mr-6" : "ml-6 mr-6 inline-block")}>
+                        <Grid2 columnSpacing={2} container>
+                            {classFilters}
+                        </Grid2>
+                    </div>
+                </div>
+                <div className={"flex items-center justify-center" + " " +  (isMobile ? "mb-4 w-[100%]": "mr-4 min-h-full")}>
+                    <button className="bg-[#0ea5e9] mr-4 p-4 rounded-md border-2 border-[#0ea5e9]" onClick={saveFilter}>SAVE</button>
+                    <button className="border-secondary dark:border-secondary-dark border-2 p-4 rounded-md" onClick={() => {updateFilter(getAllClasses())}}>RESET</button>   
+                </div>
             </div>
-            <div className="overflow-y-auto relative h-auto">
-                <Grid2 container sx={{marginLeft: 2, marginTop: 1, height: "100%"}}>
-                    {classFilters}
-                </Grid2>
-            </div>
-            <button onClick={saveFilter}>SAVE</button>
         </div>
     )
 

@@ -19,7 +19,7 @@ export default function Request({request, deleteItem}:{request:DocumentJSON, del
     }
     return(
         <div className="flex flex-row justify-between items-center
-        bg-request dark:bg-request-dark max-w-[100%] break-words mr-1 ml-1 mt-2 p-2 rounded">
+        bg-request dark:bg-request-dark max-w-[100%] break-words mt-2 p-2 rounded">
             <span>
                 <p>{request.data.name}</p>
                 <p>{request.data.class} with {request.data.teacher}</p>
