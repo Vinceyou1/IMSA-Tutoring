@@ -42,7 +42,6 @@ export default function Home() {
 
   const [data, updateData] = React.useState([] as Array<DocumentJSON>);
   const [retrieved, updateRetrieved] = React.useState(false);
-  const getData = httpsCallable(functions, 'getData');
 
   // Filters
 
@@ -70,12 +69,13 @@ export default function Home() {
     };
   }
 
-  React.useEffect(() =>{
+  React.useEffect(() => {
     const fetchData = async () =>{
-      let res = await getData();
-      let requests = res.data;
-      updateData((requests as Array<DocumentJSON>));
-      updateRetrieved(true);
+      const getData = httpsCallable(functions, 'getData');
+      await getData().then((res) => {
+        updateData((res.data as Array<DocumentJSON>));
+        updateRetrieved(true);
+      });
     }
 
     const handleResize = () => {
@@ -86,6 +86,20 @@ export default function Home() {
     fetchData();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  React.useEffect(() => {
+    const fetchFilter = async () => {
+      if(!user) return;
+      const getFilter = httpsCallable(functions, 'getFilter');
+      let res = await getFilter({});
+      let temp = res.data as Filter;
+      if(temp.classes.length == 1 && ["error", "none"].includes(temp.classes[0])) return;
+      updateFilter(temp);
+      console.log(temp);
+    }
+    
+    fetchFilter();
+  }, [user]);
 
   if(loading){
     return (<Loading />)

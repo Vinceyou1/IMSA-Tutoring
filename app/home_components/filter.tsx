@@ -4,6 +4,9 @@ import { Filter } from "../page";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { MobileContext } from "../contexts/MobileContext";
 import { classes } from "../classes/classes";
+import { FirebaseFunctionsContext } from "../contexts/FirebaseFunctionsContext";
+import { httpsCallable } from "firebase/functions";
+import { status } from "./grid";
 
 
 function FilterClass(classname: string, filter:Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
@@ -87,6 +90,7 @@ function clear(filter: Filter, updateFilter: (new_filter : Filter) => void, upda
 }
 
 export default function Filter({filter, updateFilter} : {filter: Filter, updateFilter: (new_filter : Filter) => void}){
+    const functions = useContext(FirebaseFunctionsContext);
     const [active, setActive] = useState(false);
     let styles = active ? "before:top-[95%] duration-500 top-[25%]": 
         "before:top-[50%] duration-300 top-[92.5%]";
@@ -97,7 +101,17 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
 
     useEffect(() => {
         getClasses(filter, updateFilter, updateClassFilters);
-    }, [])
+    }, [filter])
+
+    function saveFilter(){
+        const saveFilterFunc = httpsCallable(functions, 'saveFilter');
+        saveFilterFunc(filter).then((res) => {
+            const status = (res.data as status).Status;
+            if(status == "Error"){
+                alert("Error");
+            }
+        })
+    }
 
     return(
         <div className={styles + " bg-primary dark:bg-primary-dark h-[75%] ease-in-out w-[100%] fixed"}>
@@ -123,6 +137,7 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
                     {classFilters}
                 </Grid2>
             </div>
+            <button onClick={saveFilter}>SAVE</button>
         </div>
     )
 

@@ -8,10 +8,13 @@ import { useContext } from "react";
 import { MobileContext } from '../contexts/MobileContext';
 import Loading from '../loading';
 
+export type status = {
+  Status: string
+}
+
 export default function Grid({requests, filter, retrieved} : {requests: DocumentJSON[], filter: Filter, retrieved:boolean}){
     let grid;
     const isMobile = useContext(MobileContext);
-    const [data, updateData] = useState(requests);
     const [cols, updateCols] = useState([[{id: "not rendered"} as DocumentJSON]]);
     const num_cols = isMobile ? 1 : 4;
     
@@ -19,8 +22,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
     const deleteDocument = httpsCallable(functions, "deleteDocument");
 
     function dataUpdate(temp: DocumentJSON[]){
-      updateData(temp);
-      let filtered = [...data];
+      let filtered = [...requests];
       for(let index = 0; index < filtered.length;){
         if(filtered[index].data.claimed || (!(filter.classes.includes(filtered[index].data.class)))
         ) {
@@ -38,9 +40,6 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
       updateCols(temp_cols);
     }
     
-    type status = {
-      Status: string
-    }
 
 
     async function deleteItem(request: DocumentJSON){
@@ -49,7 +48,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
       await deleteDocument({id: request.id})
       .then((result) => {
         if((result.data as status).Status == "Success"){
-          let temp = data;
+          let temp = [...requests];
           temp.filter((value, index, array) =>{
             if(value.id == request.id){
               array.splice(index, 1);
@@ -66,6 +65,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
     useEffect(() => {
       const generateCols = () => {
         dataUpdate(requests);
+        console.log(filter);
       }
       generateCols();
     }, [requests, filter]);
@@ -73,7 +73,7 @@ export default function Grid({requests, filter, retrieved} : {requests: Document
     if(!retrieved){
       return <Loading />
     }
-    if(data.length == 0){
+    if(requests.length == 0){
       grid = (
         <div className='h-[80%] flex justify-center items-center text-lg'>
           <p>There are no requests at this time</p>

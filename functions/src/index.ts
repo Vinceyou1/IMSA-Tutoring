@@ -1,4 +1,4 @@
-/* eslint indent: "off", brace-style: "off", no-trailing-spaces: "off"*/
+/* eslint-disable*/
 
 import {onCall} from "firebase-functions/v2/https";
 // import * as logger from "firebase-functions/logger";
@@ -88,4 +88,52 @@ export const deleteDocument = onCall((request) => {
       Status: "Error",
     };
   });
+});
+
+export const saveFilter = onCall((request) => {
+  if (request.auth?.uid) {
+      return getFirestore().collection("filters").doc(request.auth.uid)
+      .set({
+        classes: request.data.classes
+      })
+      .then(() => {
+        return {
+          Status: "Success",
+        };
+      }).catch(() => {
+        return {
+          Status: "Error",
+        };
+      });
+    }
+  else {
+    return {
+      Status: "Error",
+    };
+  }
+});
+
+export const getFilter = onCall((request) => {
+  if (request.auth?.uid) {
+    const filterRef = getFirestore().collection("filters").doc(request.auth.uid);
+    return filterRef.get()
+    .then((doc) => {
+      if (doc.exists) {
+        return(doc.data())
+      } else {
+        return {
+          classes: ["none"]
+        }
+      }
+    }).catch(() => {
+      return {
+        classes: ["error"]
+      };
+    });
+  }
+  else {
+    return {
+      classes: ["error"]
+    };
+  }
 });
