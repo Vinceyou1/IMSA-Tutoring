@@ -105,7 +105,7 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
     function saveFilter(){
         const saveFilterFunc = httpsCallable(functions, 'saveFilter');
         saveFilterFunc(filter).then((res) => {
-            const status = (res.data as status).Status;
+            const status = (res.data as status).status;
             if(status == "Error"){
                 alert("Error");
             }

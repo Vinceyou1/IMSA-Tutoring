@@ -21,7 +21,8 @@ export type RequestJSON = {
   info: string,
   time: number,
   claimed: boolean,
-  tutor: string,
+  tutor_name: string,
+  tutor_uid: string,
 }
 
 export type DocumentJSON = {
@@ -54,8 +55,6 @@ export default function Home() {
   const [retrieved, updateRetrieved] = React.useState(false);
 
   // Filters
-
-  
   const defaultFilter:Filter = getAllClasses();
   
   const [filter, updateFilter] = React.useState(defaultFilter);
@@ -84,7 +83,6 @@ export default function Home() {
       let temp = res.data as Filter;
       if(temp.classes.length == 1 && ["error", "none"].includes(temp.classes[0])) return;
       updateFilter(temp);
-      console.log(temp);
     }
     
     fetchFilter();
@@ -94,30 +92,28 @@ export default function Home() {
     return (<Loading />)
   }
   if(user){
-    const email = user.email;
-    if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
-      return (
-        <main className="min-h-[90%]">
-          <p className='text-center'>Please reload the page and sign in with your IMSA email.</p>
-        </main>
-      )
-    }
+    // const email = user.email;
+    // if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
+    //   return (
+    //     <main className="min-h-[90%]">
+    //       <p className='text-center'>Please reload the page and sign in with your IMSA email.</p>
+    //     </main>
+    //   )
+    // }
     
 
     const changeFilter = (new_filter: Filter) => {
       updateFilter(new_filter);
     }
-    const button = isMobile ? <button onClick={() => router.push("/request")} className={'text-3xl font-bold absolute bg-secondary dark:bg-secondary-dark text-primary dark:text-primary-dark h-16 w-16 rounded-full top-[80%] left-[80%]'}>&#65291;</button> : <></>;
+    const button = isMobile ? <button onClick={() => router.push("/request")} className={'z-[-1] text-3xl font-bold absolute bg-secondary dark:bg-secondary-dark text-primary dark:text-primary-dark h-16 w-16 rounded-full top-[80%] left-[80%]'}>&#65291;</button> : <></>;
     return (
-      <>
-        <MobileContext.Provider value={isMobile}>
-        <div className={"w-[100%] h-[90%]"}>
-          <Filter filter={filter} updateFilter={(new_filter: Filter) => changeFilter(new_filter)}/>
-          <Grid requests={data} updateRequests={updateData} filter={filter} retrieved={retrieved}/>
-        </div>
-        </MobileContext.Provider>
+      <MobileContext.Provider value={isMobile}>
+      <div className={"w-[100%] h-[90%]"}>
+        <Filter filter={filter} updateFilter={(new_filter: Filter) => changeFilter(new_filter)}/>
+        <Grid requests={data} updateRequests={updateData} filter={filter} retrieved={retrieved}/>
         {button}
-      </>
+      </div>
+      </MobileContext.Provider>
     );
   }
 

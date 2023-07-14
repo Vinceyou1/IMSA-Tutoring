@@ -10,24 +10,24 @@ import Loading from '../loading';
 import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
 
 export type status = {
-  Status: string
+  status: string
 }
 
 export default function Grid({requests, updateRequests, filter, retrieved} : {requests: DocumentJSON[], updateRequests: React.Dispatch<React.SetStateAction<DocumentJSON[]>>, filter: Filter, retrieved:boolean}){
     const isMobile = useContext(MobileContext);
     const [cols, updateCols] = useState([[{id: "not rendered"} as DocumentJSON]]);
     const uid = useContext(FirebaseAuthContext).currentUser?.uid;
+    const displayName = useContext(FirebaseAuthContext).currentUser?.displayName;
     const [filtered, updateFiltered] = useState(false);
     const num_cols = isMobile ? 1 : 4;
     
     const functions = useContext(FirebaseFunctionsContext);
-    const deleteDocument = httpsCallable(functions, "deleteDocument");
 
     function dataUpdate(temp: DocumentJSON[]){
       let filtered = [...temp];
       if(filter.classes.length == 1 && filter.classes[0] == "mine"){
         for(let index = 0; index < filtered.length;){
-          if(filtered[index].data.uid != uid) filtered.splice(index, 1);
+          if(filtered[index].data.uid != uid && filtered[index].data.tutor_uid != uid) filtered.splice(index, 1);
           else index++;
         }
       }
@@ -55,11 +55,55 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
 
 
     async function deleteItem(request: DocumentJSON){
+      const deleteDocument = httpsCallable(functions, "deleteDocument");
       const deleteButton = document.getElementById("delete: " + request.id);
-      (deleteButton as HTMLButtonElement).innerHTML = "LOADING...";
+      (deleteButton as HTMLButtonElement).innerHTML = "DELETING...";
       await deleteDocument({id: request.id})
       .then((result) => {
-        if((result.data as status).Status == "Success"){
+        if((result.data as status).status == "Success"){
+          let temp = [...requests];
+          temp.filter((value, index, array) =>{
+            if(value.id == request.id){
+              array.splice(index, 1);
+            }
+          });
+          dataUpdate(temp);
+          updateRequests(temp);
+        } else {
+          alert("There was an error deleting the request");
+          (deleteButton as HTMLButtonElement).innerHTML = "DELETE";
+        }
+      });
+    }
+
+    async function claimRequest(request: DocumentJSON){
+      const claimRequest = httpsCallable(functions, "claimRequest");
+      const deleteButton = document.getElementById("claim: " + request.id);
+      (deleteButton as HTMLButtonElement).innerHTML = "CLAIMING...";
+      await claimRequest({id: request.id, name: displayName})
+      .then((result) => {
+        if((result.data as status).status == "Success"){
+          let temp = [...requests];
+          temp.filter((value, index, array) =>{
+            if(value.id == request.id){
+              array.splice(index, 1);
+            }
+          });
+          dataUpdate(temp);
+          updateRequests(temp);
+        } else {
+          alert("There was an error deleting the request");
+          (deleteButton as HTMLButtonElement).innerHTML = "DELETE";
+        }
+      });
+    }
+    async function unclaimRequest(request: DocumentJSON){
+      const unclaimRequest = httpsCallable(functions, "unclaimRequest");
+      const deleteButton = document.getElementById("claim: " + request.id);
+      (deleteButton as HTMLButtonElement).innerHTML = "UNCLAIMING...";
+      await unclaimRequest({id: request.id,})
+      .then((result) => {
+        if((result.data as status).status == "Success"){
           let temp = [...requests];
           temp.filter((value, index, array) =>{
             if(value.id == request.id){
@@ -78,18 +122,10 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
     useEffect(() => {
       const generateCols = () => {
         dataUpdate(requests);
-        console.log(filter);
       }
       generateCols();
     }, [requests, filter]);
 
-    useEffect(() => {
-      const logData = () =>{
-        console.log(filtered);
-        setTimeout(logData, 1000);
-      }
-      logData();
-    })
     if(!retrieved) return <Loading />
 
     if(requests.length == 0){
@@ -122,11 +158,11 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
           return <Loading />
       }
       return (
-      <Grid2 container sx={{marginLeft: 0.5, marginRight: 0.5, display: "flex"}}> 
+      <Grid2 spacing={1} container sx={{marginLeft: 0.5, marginRight: 0.5, display: "flex", maxWidth: "100%"}}> 
         {cols.map((col) => {  
           return (
             <Grid2 key={cols.indexOf(col)} xs={12/num_cols}>
-              { col.map((item: DocumentJSON) => <Request deleteItem={deleteItem} key={item.id} request={item} />)}
+              { col.map((item: DocumentJSON) => <Request unclaimRequest={unclaimRequest} claimRequest={claimRequest} deleteItem={deleteItem} key={item.id} request={item} />)}
             </Grid2>
           )
         })}

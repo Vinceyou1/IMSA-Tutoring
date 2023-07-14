@@ -34,6 +34,7 @@ export const postData = onCall((request) => {
   const info = request.data.info;
   const uid = request.auth?.uid;
   const post = Date.now();
+  const expire = post + 604_800_000;
   return getFirestore().collection("requests").add({
     time: post,
     name: name,
@@ -44,10 +45,11 @@ export const postData = onCall((request) => {
     uid: uid,
     claimed: false,
     tutor: "",
+    expireAt: expire,
   }).then(() => {
-    return {status: "success"};
+    return {status: "Success"};
   }).catch(() => {
-    return {status: "error"};
+    return {status: "Error"};
   });
 });
 
@@ -68,11 +70,11 @@ export const getDocument = onCall((request) =>{
   return getFirestore().doc("requests/" + request.data.id).get()
   .then(() => {
     return {
-      Status: "Success",
+      status: "Success",
     };
   }).catch(() => {
     return {
-      Status: "Error",
+      status: "Error",
     };
   });
 });
@@ -81,11 +83,11 @@ export const deleteDocument = onCall((request) => {
   return getFirestore().doc("requests/" + request.data.id).delete()
   .then(() => {
     return {
-      Status: "Success",
+      status: "Success",
     };
   }).catch(() => {
     return {
-      Status: "Error",
+      status: "Error",
     };
   });
 });
@@ -98,17 +100,17 @@ export const saveFilter = onCall((request) => {
       })
       .then(() => {
         return {
-          Status: "Success",
+          status: "Success",
         };
       }).catch(() => {
         return {
-          Status: "Error",
+          status: "Error",
         };
       });
     }
   else {
     return {
-      Status: "Error",
+      status: "Error",
     };
   }
 });
@@ -137,3 +139,41 @@ export const getFilter = onCall((request) => {
     };
   }
 });
+
+export const claimRequest = onCall((request) => {
+  if(request.auth?.uid){
+    const requestRef = getFirestore().collection("requests").doc(request.data.id)
+    return requestRef.update({
+      claimed: true,
+      tutor_name: request.data.name,
+      tutor_uid: request.auth.uid,
+    }).then((res) => {
+      return {status: "Success"}
+    }).catch(() =>{
+      return {status: "Error"}
+    })
+  } else {
+    return {
+      status: "Error",
+    }
+  }
+})
+
+export const unclaimRequest = onCall((request) => {
+  if(request.auth?.uid){
+    const requestRef = getFirestore().collection("requests").doc(request.data.id)
+    return requestRef.update({
+      claimed: false,
+      tutor: "",
+      tutor_uid: "",
+    }).then((res) => {
+      return {status: "Success"}
+    }).catch(() =>{
+      return {status: "Error"}
+    })
+  } else {
+    return {
+      status: "Error",
+    }
+  }
+})

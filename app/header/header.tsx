@@ -15,8 +15,7 @@ export default function Header(){
     let signInOut;
     const signIn = async () => {
         try{  
-        const result = await signInWithPopup(auth, provider);
-        console.log(result.user);
+            const result = await signInWithPopup(auth, provider);
         } catch {}
     }
 

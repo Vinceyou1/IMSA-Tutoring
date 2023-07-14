@@ -7,31 +7,9 @@ import React, { useContext } from 'react';
 import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from '../contexts/FirebaseFunctionsContext';
 import Grid from '../home_components/grid';
-import Filter from '../home_components/filter';
 import { MobileContext } from '../contexts/MobileContext';
 import { classes } from '../classes/classes';
-
-
-export type RequestJSON = {
-  uid: string,
-  teacher: string,
-  class: string, 
-  subject: string,
-  name: string,
-  info: string,
-  time: number,
-  claimed: boolean,
-  tutor: string,
-}
-
-export type DocumentJSON = {
-  id: string,
-  data: RequestJSON
-}
-
-export type Filter = {
-  classes: string[]
-}
+import { DocumentJSON, Filter } from "../page";
 
 export function getAllClasses(){
   let temp_filter:Filter = {classes:[]};
@@ -89,7 +67,7 @@ export default function Home() {
     return (
       <>
         <MobileContext.Provider value={isMobile}>
-        <div className="ml-1 w-[100%] h-[90%]">
+        <div className="w-[100%] h-[90%]">
           <Grid requests={data} updateRequests={updateData} filter={myFilter} retrieved={retrieved}/>
         </div>
         </MobileContext.Provider>

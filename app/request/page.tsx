@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Loading from "../loading";
 import { classes } from "../classes/classes";
+import { status } from "../home_components/grid";
 
 export default function Request(){
     
@@ -124,9 +125,15 @@ export default function Request(){
       _class: _class,
       info: info,
       uid: auth.currentUser?.uid
-    }).then(() => {updateSubmitLoading(false)})
+    }).then((res) => {
+      const status = (res.data as status).status;
+      if(status != "Success"){
+        alert("There's been an error. Please try again.");
+      }
+    })
     .catch(() => {updateSubmitLoading(false); alert("There's been an error. Please try again.")})
     .then(() => {
+      updateSubmitLoading(false);
       changeSubject("Math");
       updateClass("Geometry");
     });
