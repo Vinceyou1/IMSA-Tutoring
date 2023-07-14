@@ -137,8 +137,7 @@ export default function Request(){
     return(<Loading />)
   }
   if(!user){
-    window.location.replace("/")
-    console.log(user);
+    router.push("/");
   }
   return(
     <div className="flex justify-center flex-col items-center min-h-[80%]">
