@@ -7,15 +7,16 @@ import { httpsCallable } from 'firebase/functions';
 import { useContext } from "react";
 import { MobileContext } from '../contexts/MobileContext';
 import Loading from '../loading';
+import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
 
 export type status = {
   Status: string
 }
 
 export default function Grid({requests, updateRequests, filter, retrieved} : {requests: DocumentJSON[], updateRequests: React.Dispatch<React.SetStateAction<DocumentJSON[]>>, filter: Filter, retrieved:boolean}){
-    let grid;
     const isMobile = useContext(MobileContext);
     const [cols, updateCols] = useState([[{id: "not rendered"} as DocumentJSON]]);
+    const uid = useContext(FirebaseAuthContext).currentUser?.uid;
     const [filtered, updateFiltered] = useState(false);
     const num_cols = isMobile ? 1 : 4;
     
@@ -23,22 +24,31 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
     const deleteDocument = httpsCallable(functions, "deleteDocument");
 
     function dataUpdate(temp: DocumentJSON[]){
-      let filtered = temp;
-      for(let index = 0; index < filtered.length;){
-        if(filtered[index].data.claimed || (!(filter.classes.includes(filtered[index].data.class)))
-        ) {
-            filtered.splice(index, 1);
-        } else {index++;}
+      let filtered = [...temp];
+      if(filter.classes.length == 1 && filter.classes[0] == "mine"){
+        for(let index = 0; index < filtered.length;){
+          if(filtered[index].data.uid != uid) filtered.splice(index, 1);
+          else index++;
+        }
+      }
+      else{
+        for(let index = 0; index < filtered.length;){
+          if(filtered[index].data.claimed || (!(filter.classes.includes(filtered[index].data.class))) || filtered[index].data.uid == uid) {
+              filtered.splice(index, 1);
+          } else {index++;}
+        }
       }
       if(filtered.length == 0){
-        return updateCols([]);
+        updateCols([]);
+      } else {
+        let temp_cols: DocumentJSON[][] = [[filtered[0]]];
+        for(let i = 1; i < num_cols && i < filtered.length; i++){ temp_cols.push([filtered[i]]);}
+        for(let i = num_cols; i < filtered.length; i++){
+          temp_cols[i % num_cols].push(filtered[i]);
+        }
+        updateCols(temp_cols);
+
       }
-      let temp_cols: DocumentJSON[][] = [[filtered[0]]];
-      for(let i = 1; i < num_cols && i < filtered.length; i++){ temp_cols.push([filtered[i]]);}
-      for(let i = num_cols; i < filtered.length; i++){
-        temp_cols[i % num_cols].push(filtered[i]);
-      }
-      updateCols(temp_cols);
       updateFiltered(true);
     }
     
@@ -73,11 +83,17 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
       generateCols();
     }, [requests, filter]);
 
-    if(!retrieved){
-      return <Loading />
-    }
+    useEffect(() => {
+      const logData = () =>{
+        console.log(filtered);
+        setTimeout(logData, 1000);
+      }
+      logData();
+    })
+    if(!retrieved) return <Loading />
+
     if(requests.length == 0){
-      grid = (
+      return (
         <div className='h-[80%] flex justify-center items-center text-lg'>
           <p>There are no requests at this time</p>
         </div>
@@ -87,6 +103,15 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
         return (<Loading />);
       }
       if(cols.length == 0){
+        for(let i = 0; i < requests.length; i++){
+          if(requests[i].data.uid == uid){
+            return (
+              <div className='h-[80%] flex justify-center items-center text-lg'>
+                <p>There are no requests at this time</p>
+              </div>
+            );
+          }
+        }
         return(
           <div className='h-[80%] flex justify-center items-center text-lg text-center'>
             <p>There are no requests with the selected filters</p>
@@ -96,7 +121,7 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
       if(cols[0].length == 1 && cols[0][0].id == "not rendered"){
           return <Loading />
       }
-      grid = (
+      return (
       <Grid2 container sx={{marginLeft: 0.5, marginRight: 0.5, display: "flex"}}> 
         {cols.map((col) => {  
           return (
@@ -108,5 +133,4 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
       </Grid2>
       );
     }
-    return(grid);
 }

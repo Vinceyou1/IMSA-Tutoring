@@ -2,14 +2,14 @@
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useRouter } from 'next/navigation';
 import { httpsCallable } from 'firebase/functions'
-import Loading from './loading';
+import Loading from '../loading';
 import React, { useContext } from 'react';
-import { FirebaseAuthContext } from './contexts/FirebaseAuthContext';
-import { FirebaseFunctionsContext } from './contexts/FirebaseFunctionsContext';
-import Grid from './home_components/grid';
-import Filter from './home_components/filter';
-import { MobileContext } from './contexts/MobileContext';
-import { classes } from './classes/classes';
+import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
+import { FirebaseFunctionsContext } from '../contexts/FirebaseFunctionsContext';
+import Grid from '../home_components/grid';
+import Filter from '../home_components/filter';
+import { MobileContext } from '../contexts/MobileContext';
+import { classes } from '../classes/classes';
 
 
 export type RequestJSON = {
@@ -53,12 +53,8 @@ export default function Home() {
   const [data, updateData] = React.useState([] as Array<DocumentJSON>);
   const [retrieved, updateRetrieved] = React.useState(false);
 
-  // Filters
-
-  
-  const defaultFilter:Filter = getAllClasses();
-  
-  const [filter, updateFilter] = React.useState(defaultFilter);
+  // Filters  
+  const myFilter:Filter = {classes: ["mine"]};
 
   const [isMobile, updateMobile] = React.useState(false);
 
@@ -76,20 +72,6 @@ export default function Home() {
     fetchData();
   }, []);
 
-  React.useEffect(() => {
-    const fetchFilter = async () => {
-      if(!user) return;
-      const getFilter = httpsCallable(functions, 'getFilter');
-      let res = await getFilter({});
-      let temp = res.data as Filter;
-      if(temp.classes.length == 1 && ["error", "none"].includes(temp.classes[0])) return;
-      updateFilter(temp);
-      console.log(temp);
-    }
-    
-    fetchFilter();
-  }, [user]);
-
   if(loading){
     return (<Loading />)
   }
@@ -103,31 +85,17 @@ export default function Home() {
       )
     }
     
-
-    const changeFilter = (new_filter: Filter) => {
-      updateFilter(new_filter);
-    }
     const button = isMobile ? <button onClick={() => router.push("/request")} className={'text-3xl font-bold absolute bg-secondary dark:bg-secondary-dark text-primary dark:text-primary-dark h-16 w-16 rounded-full top-[80%] left-[80%]'}>&#65291;</button> : <></>;
     return (
       <>
         <MobileContext.Provider value={isMobile}>
-        <div className={"w-[100%] h-[90%]"}>
-          <Filter filter={filter} updateFilter={(new_filter: Filter) => changeFilter(new_filter)}/>
-          <Grid requests={data} updateRequests={updateData} filter={filter} retrieved={retrieved}/>
+        <div className="ml-1 w-[100%] h-[90%]">
+          <Grid requests={data} updateRequests={updateData} filter={myFilter} retrieved={retrieved}/>
         </div>
         </MobileContext.Provider>
         {button}
       </>
     );
   }
-
-  return (
-    <div className='flex min-h-[80%] items-center justify-center'>
-      <div>
-          <h1 className='text-center text-lg'>Welcome to IMSA Tutoring!</h1>
-          <h3 className='text-center text-lg'>Sign in with your IMSA email to get started</h3>
-          <div className='h-12'></div>
-      </div>
-    </div>
-  )
+  router.push("/");
 }
