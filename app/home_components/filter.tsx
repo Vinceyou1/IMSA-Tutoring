@@ -1,12 +1,13 @@
 'use client'
 import { useContext, useEffect, useState } from "react";
-import { Filter, getAllClasses } from "../page";
+import { Filter} from "../page";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import { MobileContext } from "../contexts/MobileContext";
 import { classes } from "../classes/classes";
 import { FirebaseFunctionsContext } from "../contexts/FirebaseFunctionsContext";
 import { httpsCallable } from "firebase/functions";
 import { status } from "./grid";
+import { getAllClasses } from "../allClasses";
 
 
 function FilterClass(classname: string, filter:Filter, updateFilter: (new_filter : Filter) => void, updateClassFilters: React.Dispatch<React.SetStateAction<JSX.Element[]>>){
@@ -100,16 +101,19 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
 
     useEffect(() => {
         getClasses(filter, updateFilter, updateClassFilters);
-    }, [filter])
+    }, [filter, updateFilter])
 
     function saveFilter(){
         const saveFilterFunc = httpsCallable(functions, 'saveFilter');
+        const saveButton = document.getElementById("savefilter") as HTMLButtonElement;
+        saveButton.innerText = "SAVING...";
         saveFilterFunc(filter).then((res) => {
             const status = (res.data as status).status;
             if(status == "Error"){
                 alert("Error");
             }
-        })
+        }).catch(() => alert("Error"))
+        .then(() => saveButton.innerText = "SAVE")
     }
     const divstyle = (active ? "duration-500 " + (isMobile ? "top-[40%]" : "top-[80%]"): 
     "duration-300 top-[92%]") + " " + (isMobile ? "h-[60%]" : "h-[20%]" ) + " ";
@@ -141,7 +145,7 @@ export default function Filter({filter, updateFilter} : {filter: Filter, updateF
                     </div>
                 </div>
                 <div className={"flex items-center justify-center" + " " +  (isMobile ? "mb-4 w-[100%]": "mr-4 min-h-full")}>
-                    <button className="bg-[#0ea5e9] mr-4 p-4 rounded-md border-2 border-[#0ea5e9]" onClick={saveFilter}>SAVE</button>
+                    <button id="savefilter" className="bg-[#0ea5e9] mr-4 p-4 rounded-md border-2 border-[#0ea5e9]" onClick={saveFilter}>SAVE</button>
                     <button className="border-secondary dark:border-secondary-dark border-2 p-4 rounded-md" onClick={() => {updateFilter(getAllClasses())}}>RESET</button>   
                 </div>
             </div>

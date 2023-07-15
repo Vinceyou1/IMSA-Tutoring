@@ -1,7 +1,7 @@
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 import Request from './request';
 import { DocumentJSON, Filter } from "../page";
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FirebaseFunctionsContext } from '../contexts/FirebaseFunctionsContext';
 import { httpsCallable } from 'firebase/functions';
 import { useContext } from "react";
@@ -118,13 +118,14 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
         }
       });
     }
+    const callback = useCallback((requests:DocumentJSON[]) => {
+      dataUpdate(requests);
+    },[]);
 
     useEffect(() => {
-      const generateCols = () => {
-        dataUpdate(requests);
-      }
-      generateCols();
-    }, [requests, filter]);
+      callback(requests);
+    }, [requests, filter, callback])
+
 
     if(!retrieved) return <Loading />
 

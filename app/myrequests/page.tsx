@@ -8,18 +8,7 @@ import { FirebaseAuthContext } from '../contexts/FirebaseAuthContext';
 import { FirebaseFunctionsContext } from '../contexts/FirebaseFunctionsContext';
 import Grid from '../home_components/grid';
 import { MobileContext } from '../contexts/MobileContext';
-import { classes } from '../classes/classes';
 import { DocumentJSON, Filter } from "../page";
-
-export function getAllClasses(){
-  let temp_filter:Filter = {classes:[]};
-  for (const [key, value] of Object.entries(classes)) {
-    value.forEach((element) => {
-      temp_filter.classes.push(element);
-    })
-  }
-  return temp_filter
-}
 
 
 export default function Home() {
@@ -48,10 +37,13 @@ export default function Home() {
 
     updateMobile(window.innerHeight > window.innerWidth);
     fetchData();
-  }, []);
+  }, [functions]);
 
   if(loading){
-    return (<Loading />)
+    return <Loading />
+  }
+  if(!user){
+    router.push("/");
   }
   if(user){
     const email = user.email;
@@ -75,5 +67,4 @@ export default function Home() {
       </>
     );
   }
-  router.push("/");
 }

@@ -10,6 +10,7 @@ import Grid from './home_components/grid';
 import Filter from './home_components/filter';
 import { MobileContext } from './contexts/MobileContext';
 import { classes } from './classes/classes';
+import { getAllClasses } from './allClasses';
 
 
 export type RequestJSON = {
@@ -34,15 +35,7 @@ export type Filter = {
   classes: string[]
 }
 
-export function getAllClasses(){
-  let temp_filter:Filter = {classes:[]};
-  for (const [key, value] of Object.entries(classes)) {
-    value.forEach((element) => {
-      temp_filter.classes.push(element);
-    })
-  }
-  return temp_filter
-}
+
 
 
 export default function Home() {
@@ -55,9 +48,7 @@ export default function Home() {
   const [retrieved, updateRetrieved] = React.useState(false);
 
   // Filters
-  const defaultFilter:Filter = getAllClasses();
-  
-  const [filter, updateFilter] = React.useState(defaultFilter);
+  const [filter, updateFilter] = React.useState(getAllClasses());
 
   const [isMobile, updateMobile] = React.useState(false);
 
@@ -73,7 +64,7 @@ export default function Home() {
 
     updateMobile(window.innerHeight > window.innerWidth);
     fetchData();
-  }, []);
+  }, [functions]);
 
   React.useEffect(() => {
     const fetchFilter = async () => {
@@ -86,20 +77,20 @@ export default function Home() {
     }
     
     fetchFilter();
-  }, [user]);
+  }, [user, functions]);
 
   if(loading){
     return (<Loading />)
   }
   if(user){
-    // const email = user.email;
-    // if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
-    //   return (
-    //     <main className="min-h-[90%]">
-    //       <p className='text-center'>Please reload the page and sign in with your IMSA email.</p>
-    //     </main>
-    //   )
-    // }
+    const email = user.email;
+    if(email?.slice(email.indexOf("@")) != "@imsa.edu"){
+      return (
+        <div className='flex min-h-[80%] items-center justify-center'>
+          <p className='text-center text-lg'>Please reload the page and sign in with your IMSA email.</p>
+        </div>
+      )
+    }
     
 
     const changeFilter = (new_filter: Filter) => {
