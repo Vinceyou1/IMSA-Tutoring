@@ -118,13 +118,11 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
         }
       });
     }
-    const callback = useCallback((requests:DocumentJSON[]) => {
-      dataUpdate(requests);
-    },[]);
 
     useEffect(() => {
-      callback(requests);
-    }, [requests, filter, callback])
+      dataUpdate(requests);
+      console.log(filter.classes);
+    }, [requests, filter])
 
 
     if(!retrieved) return <Loading />
