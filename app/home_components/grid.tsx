@@ -121,7 +121,6 @@ export default function Grid({requests, updateRequests, filter, retrieved} : {re
 
     useEffect(() => {
       dataUpdate(requests);
-      console.log(filter.classes);
     }, [requests, filter])
 
 

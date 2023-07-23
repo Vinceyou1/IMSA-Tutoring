@@ -34,7 +34,7 @@ export const postData = onCall((request) => {
   const info = request.data.info;
   const uid = request.auth?.uid;
   const post = Date.now();
-  const expire = post + 604_800_000;
+  const expire = new Date(post + 604_800_000);
   return getFirestore().collection("requests").add({
     time: post,
     name: name,
